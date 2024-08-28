@@ -1,0 +1,13 @@
+"Atualizar o seu projeto"
+git checkout main
+git pull
+
+"criar nova branch"
+git checkout -b 'nome-branch'
+
+~COMEÇA A CODAR~
+
+git add .
+git commit -m 'o que fez de alteração'
+git push
+
