@@ -39,6 +39,3 @@ O sistema foi projetado para substituir métodos arcaicos de gerenciamento e oti
 
 ## Instalação e Configuração
 
-1. **Clone o repositório:**
-   ```bash
-   git clone https://github.com/jesusisking/backend.git
