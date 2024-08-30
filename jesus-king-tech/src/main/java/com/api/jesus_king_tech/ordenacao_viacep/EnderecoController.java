@@ -40,7 +40,6 @@ public class EnderecoController {
     public static void main(String[] args) {
         EnderecoController encontrar = new EnderecoController();
 
-
         String[] ceps = {"02879130", "01002000", "01003000",
                 "06010000",
                 "07020000",
