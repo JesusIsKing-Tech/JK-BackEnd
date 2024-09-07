@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import org.antlr.v4.runtime.misc.NotNull;
 
 @Entity
 @Table(name = "usuarios")
@@ -13,7 +15,10 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @NotBlank(message = "O campo \"Nome\" não pode estar em branco")
     private String nome;
+
     private String email;
 
     private String senha;
