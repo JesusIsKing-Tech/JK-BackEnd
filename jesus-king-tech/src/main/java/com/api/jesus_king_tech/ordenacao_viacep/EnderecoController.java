@@ -15,7 +15,10 @@ public class EnderecoController {
             int indiceMinimo = i;
 
             for (int j = i + 1; j < enderecos.length; j++) {
-                if (enderecos[j].getLogradouro().compareTo(enderecos[indiceMinimo].getLogradouro()) < 0) {
+                String logradouroAtual = enderecos[j].getLogradouro();
+                String logradouroMinimo = enderecos[indiceMinimo].getLogradouro();
+
+                if (logradouroAtual != null && (logradouroMinimo == null || logradouroAtual.compareTo(logradouroMinimo) < 0)) {
                     indiceMinimo = j;
                 }
             }
@@ -46,19 +49,21 @@ public class EnderecoController {
                 "01414000",
                 "05001000",
                 "02011000",
-                "01001000"};
+                "01001000",
+        "99299292"};
 
         Endereco[] enderecosOrdenados = encontrar.buscarEOrdenarEnderecosPorLogradouro(ceps);
 
         for (Endereco endereco : enderecosOrdenados) {
-            if (endereco != null) {
+            if (endereco != null && endereco.getLogradouro() != null) {
                 System.out.println(endereco.getLogradouro() + ", " + endereco.getBairro() + ", " + endereco.getLocalidade() + ", " + endereco.getUf());
             } else {
-                System.out.println("Endereço não encontrado");
+                System.out.println("Endereço incompleto ou não encontrado.");
             }
         }
     }
     }
+
 
 
 
