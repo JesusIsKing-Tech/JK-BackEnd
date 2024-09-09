@@ -1,18 +1,13 @@
-package com.api.jesus_king_tech.alimento;
+package com.api.jesus_king_tech.produto;
 
+public class ProdutoDTO {
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "alimentos")
-public class Alimento {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nome;
     private Integer quantidade;
     private Double peso;
+    private CategoriaDTO categoria;
+    private TipoDTO tipo;
 
 
     public Integer getId() {
@@ -45,5 +40,21 @@ public class Alimento {
 
     public void setPeso(Double peso) {
         this.peso = peso;
+    }
+
+    public CategoriaDTO getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(CategoriaDTO categoria) {
+        this.categoria = categoria;
+    }
+
+    public TipoDTO getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoDTO tipo) {
+        this.tipo = tipo;
     }
 }
