@@ -1,19 +1,36 @@
 package com.api.jesus_king_tech.util;
 
+import com.api.jesus_king_tech.cadastro_login.Usuario;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.regex.Pattern;
 
-public class EmailUtil {
+@Component //esse @component é para mostrar que ele é um componente da validação, sem ele não funciona essa validação
+public class EmailUtil implements ValidacaoUsuarioStrategy {
 
     private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
-    public static boolean emailValido(String email){
-        if (email == null){
+//    public static boolean emailValido(String email) {
+//        if (email == null) {
+//            return false;
+//        }
+//        return pattern.matcher(email).matches();
+//    }
+
+    @Override
+    public boolean validar(Usuario usuario) {
+        if (usuario.getEmail() == null) {
             return false;
         }
-        return pattern.matcher(email).matches();
+        return pattern.matcher(usuario.getEmail()).matches();
+    }
+
+    @Override
+    public String respostaErro() {
+        return "O email fornecido é inválido.\n" +
+                "Por favor, insira um email no formato correto, como exemplo@dominio.com.";
     }
 }
 
