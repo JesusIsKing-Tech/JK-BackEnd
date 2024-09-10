@@ -11,7 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain web(HttpSecurity http) throws Exception {
-        System.out.println("olá");
+        System.out.println("Permissão geral adicionada");
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/**").permitAll()

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -47,7 +48,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/recuperar-senha")
-    public ResponseEntity<String> recuperarSenha(@RequestBody String emailUsuario) {
+    public ResponseEntity<String> recuperarSenha(@RequestParam String emailUsuario) {
         System.out.println(emailUsuario);
 
         if (!usuarioRepository.existsByEmail(emailUsuario)) {
@@ -67,6 +68,21 @@ public class UsuarioController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("Código inválido");
+    }
+
+    @PatchMapping("/recuperar-senha/nova-senha")
+    public ResponseEntity<String> novaSenha(@RequestBody Map<String, String> recuperarSenha) {
+        System.out.println(recuperarSenha.get("email"));
+        Usuario usuario = usuarioRepository.findByEmail(recuperarSenha.get("email"));
+        if (usuario == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Email não cadastrado");
+        }
+        String hashSenha = PasswordUtil.encoder(recuperarSenha.get("novaSenha"));
+        usuario.setSenha(hashSenha);
+        usuarioRepository.save(usuario);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Senha alterada com sucesso");
     }
 
 
