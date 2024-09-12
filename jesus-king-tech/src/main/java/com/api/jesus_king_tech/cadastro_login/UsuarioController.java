@@ -34,6 +34,11 @@ public class UsuarioController {
             }
         }
 
+        if (usuarioRepository.findByEmail(novoUsuario.getEmail()) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Email já cadastrado");
+        }
+
         String hashSenha = PasswordUtil.encoder(novoUsuario.getSenha());
         novoUsuario.setSenha(hashSenha);
 
@@ -83,6 +88,40 @@ public class UsuarioController {
         usuarioRepository.save(usuario);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Senha alterada com sucesso");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletarUsuario(@PathVariable Integer id) {
+        if (usuarioRepository.existsById(id)) {
+            usuarioRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Usuário deletado com sucesso");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Usuário não encontrado");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> atualizarUsuario(@PathVariable Integer id, @RequestBody Usuario usuario){
+        if(usuarioRepository.existsById(id)){
+            usuario.setId(id);
+//            VALIDA AS INFORMAÇÕES DO USUÁRIO
+            for (int i = 0; i < validacoes.size(); i++) {
+                if (!validacoes.get(i).validar(usuario)) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(validacoes.get(i).respostaErro());
+                }
+            }
+            String hashSenha = PasswordUtil.encoder(usuario.getSenha());
+            usuario.setSenha(hashSenha);
+
+            usuarioRepository.save(usuario);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Usuário atualizado com sucesso");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Usuário não encontrado");
     }
 
 
