@@ -34,6 +34,11 @@ public class UsuarioController {
             }
         }
 
+        if (usuarioRepository.findByEmail(novoUsuario.getEmail()) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Email já cadastrado");
+        }
+
         String hashSenha = PasswordUtil.encoder(novoUsuario.getSenha());
         novoUsuario.setSenha(hashSenha);
 
@@ -117,6 +122,24 @@ public class UsuarioController {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("Usuário não encontrado");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginAuth loginRequest) {
+        Usuario usuario = usuarioRepository.findByEmail(loginRequest.getEmail());
+        if (usuario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Email ou senha inválidos");
+        }
+
+        boolean senhaValida = PasswordUtil.senhaCorreta(loginRequest.getSenha(), usuario.getSenha());
+        if (!senhaValida) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Email ou senha inválidos");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Login realizado com sucesso");
     }
 
 

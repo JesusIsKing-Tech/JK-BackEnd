@@ -1,6 +1,7 @@
 package com.api.jesus_king_tech.util;
 
 import com.api.jesus_king_tech.cadastro_login.Usuario;
+import com.api.jesus_king_tech.cadastro_login.UsuarioRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -12,15 +13,9 @@ public class EmailUtil implements ValidacaoUsuarioStrategy {
     private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
-//    public static boolean emailValido(String email) {
-//        if (email == null) {
-//            return false;
-//        }
-//        return pattern.matcher(email).matches();
-//    }
-
     @Override
     public boolean validar(Usuario usuario) {
+
         if (usuario.getEmail() == null) {
             return false;
         }

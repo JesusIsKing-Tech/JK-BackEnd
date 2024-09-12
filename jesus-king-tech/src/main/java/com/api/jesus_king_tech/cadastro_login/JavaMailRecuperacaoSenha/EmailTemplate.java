@@ -29,7 +29,7 @@ public class EmailTemplate {
                 "<p>Se você não solicitou a recuperação de senha, por favor ignore este email.</p>" +
                 "</div>" +
                 "<div class='footer'>" +
-                "<p>&copy; 2023 Jesus King Tech. Todos os direitos reservados.</p>" +
+                "<p>&copy; 2024 Jesus King Tech. Todos os direitos reservados.</p>" +
                 "</div>" +
                 "</div>" +
                 "</body>" +
