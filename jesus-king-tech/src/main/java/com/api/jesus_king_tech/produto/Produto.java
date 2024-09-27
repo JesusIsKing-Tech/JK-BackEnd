@@ -14,7 +14,7 @@ public class Produto {
     private Double peso;
 
     @Column(name = "dtEntrada")
-    private LocalDate dataEntrada;
+    private LocalDate dataEntrada = LocalDate.now();
 
     @ManyToOne
     @JoinColumn(name = "fk_categoria", nullable = false)
