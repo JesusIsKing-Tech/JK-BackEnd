@@ -145,13 +145,6 @@ public class ProdutoController {
         dto.setId(tipo.getId());
         dto.setNome(tipo.getNome());
 
-        if (tipo.getCategoria() != null) {
-            CategoriaDTO categoriaDTO = new CategoriaDTO();
-            categoriaDTO.setId(tipo.getCategoria().getId());
-            categoriaDTO.setNome(tipo.getCategoria().getNome());
-            dto.setCategoria(categoriaDTO);
-        }
-
         return dto;
     }
 
