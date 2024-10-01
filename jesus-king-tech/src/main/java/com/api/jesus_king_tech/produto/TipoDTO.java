@@ -6,7 +6,7 @@ public class TipoDTO {
 
     private Integer id;
     private String nome;
-    private CategoriaDTO categoria;
+
 
 
     public Integer getId() {
@@ -25,11 +25,5 @@ public class TipoDTO {
         this.nome = nome;
     }
 
-    public CategoriaDTO getCategoria() {
-        return categoria;
-    }
 
-    public void setCategoria(CategoriaDTO categoria) {
-        this.categoria = categoria;
-    }
 }

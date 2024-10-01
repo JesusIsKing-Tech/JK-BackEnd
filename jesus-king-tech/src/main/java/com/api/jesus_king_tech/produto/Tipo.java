@@ -15,10 +15,6 @@ public class Tipo {
 
     private String nome;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fk_categoria")
-    private Categoria categoria;
-
 
     public Integer getId() {
         return id;
@@ -37,11 +33,5 @@ public class Tipo {
     }
 
 
-    public Categoria getCategoria() {
-        return categoria;
-    }
 
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
-    }
 }
