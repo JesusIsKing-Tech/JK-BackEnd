@@ -1,6 +1,6 @@
-package com.api.jesus_king_tech.cadastro_login.JavaMailRecuperacaoSenha;
+package com.api.jesus_king_tech.service.JavaMailRecuperacaoSenha;
 
-import com.api.jesus_king_tech.config.EnvironmentConfig;
+import com.api.jesus_king_tech.api.config.EnvironmentConfig;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class JavaMail {
     private static String code;
-    public static void sendEmail(String to){
+    public static void sendEmail(String to, String nomeUsuario){
 
         final String email = EnvironmentConfig.get("EMAIL_EMAIL");
         final String password = EnvironmentConfig.get("EMAIL_SENHA");
@@ -39,7 +39,7 @@ public class JavaMail {
             message.setFrom(new InternetAddress(email));
             message.setRecipient(Message.RecipientType.TO, InternetAddress.parse(to)[0]);
             message.setSubject("Seu codigo de Recuperação de senha");
-            message.setContent(EmailTemplate.getPasswordResetEmailBody(code), "text/html; charset=utf-8");
+            message.setContent(EmailTemplate.getPasswordResetEmailBody(code, nomeUsuario), "text/html; charset=utf-8");
 
             Transport.send(message);
             System.out.println("O codigo gerado foi: " + code);

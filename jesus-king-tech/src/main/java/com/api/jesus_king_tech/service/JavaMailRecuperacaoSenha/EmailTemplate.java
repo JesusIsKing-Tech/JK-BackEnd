@@ -1,8 +1,8 @@
-package com.api.jesus_king_tech.cadastro_login.JavaMailRecuperacaoSenha;
+package com.api.jesus_king_tech.service.JavaMailRecuperacaoSenha;
 
 public class EmailTemplate {
 
-    public static String getPasswordResetEmailBody(String code) {
+    public static String getPasswordResetEmailBody(String code, String nomeUsuario) {
         return "<!DOCTYPE html>" +
                 "<html>" +
                 "<head>" +
@@ -23,7 +23,7 @@ public class EmailTemplate {
                 "<h1>Recuperação de Senha</h1>" +
                 "</div>" +
                 "<div class='content'>" +
-                "<p>Olá,</p>" +
+                "<p>Olá, " + nomeUsuario + "</p>" +
                 "<p>Você solicitou a recuperação de sua senha. Use o código abaixo para redefinir sua senha:</p>" +
                 "<div class='code'>" + code + "</div>" +
                 "<p>Se você não solicitou a recuperação de senha, por favor ignore este email.</p>" +

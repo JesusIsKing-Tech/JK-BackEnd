@@ -1,10 +1,17 @@
-package com.api.jesus_king_tech.cadastro_login;
+package com.api.jesus_king_tech.api.controller;
 
-import com.api.jesus_king_tech.cadastro_login.JavaMailRecuperacaoSenha.JavaMail;
-import com.api.jesus_king_tech.util.EmailUtil;
+import com.api.jesus_king_tech.domain.usuario.dto.UsuarioCriarDto;
+import com.api.jesus_king_tech.domain.usuario.dto.UsuarioMapper;
+import com.api.jesus_king_tech.domain.usuario.dto.UsuarioResponseDto;
+import com.api.jesus_king_tech.domain.usuario.dto.UsuarioValidarSenhaDto;
+import com.api.jesus_king_tech.service.JavaMailRecuperacaoSenha.JavaMail;
+import com.api.jesus_king_tech.domain.usuario.Usuario;
+import com.api.jesus_king_tech.domain.usuario.repository.UsuarioRepository;
+import com.api.jesus_king_tech.service.UsuarioService;
 import com.api.jesus_king_tech.util.PasswordUtil;
 import com.api.jesus_king_tech.util.ValidacaoUsuarioStrategy;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,67 +19,66 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/usuarios")
+@RequiredArgsConstructor
 public class UsuarioController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    private final UsuarioService usuarioService;
 
     @Autowired
     private List<ValidacaoUsuarioStrategy> validacoes;
 
 
     @PostMapping()
-    public ResponseEntity<String> cadastrarUsuario(@Valid @RequestBody Usuario novoUsuario) {
-        // esse for faz o novo usuário percorrer as validações que estão na ValidaçãoUsuarioStrategy
-        for (int i = 0; i < validacoes.size(); i++) {
-            if (!validacoes.get(i).validar(novoUsuario)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(validacoes.get(i).respostaErro());
-            }
-        }
+    public ResponseEntity<UsuarioResponseDto> cadastrarUsuario(@Valid @RequestBody UsuarioCriarDto novoUsuario) {
 
-        if (usuarioRepository.findByEmail(novoUsuario.getEmail()) != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Email já cadastrado");
-        }
+        Usuario usuarioSalvar = UsuarioMapper.usuarioDtoToEntity(novoUsuario);
 
-        String hashSenha = PasswordUtil.encoder(novoUsuario.getSenha());
-        novoUsuario.setSenha(hashSenha);
+        Usuario usuarioSalvo = usuarioService.criarUsuario(usuarioSalvar);
 
-        usuarioRepository.save(novoUsuario);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Usuário cadastrado com sucesso !");
+        UsuarioResponseDto usuarioResponseDto = UsuarioMapper.usuarioEntityToDto(usuarioSalvo);
+
+        return ResponseEntity.status(201).body(usuarioResponseDto);
     }
 
     @GetMapping
-    public List<Usuario> listarUsuarios() {
-        return usuarioRepository.findAll();
+    public ResponseEntity<List<UsuarioResponseDto>> listarUsuarios() {
+        List<Usuario> listagem = usuarioService.listarUsuarios();
+
+        if (listagem.isEmpty()){
+            ResponseEntity.status(204).build();
+        }
+
+//        Essa lista está sendo mapeada como um for
+//        Pega cada objeto da lista listagem, e aplica o metodo UsuarioMapper.usuarioEntityToDto()
+        List<UsuarioResponseDto> dtos =listagem
+                .stream()
+                .map(UsuarioMapper::usuarioEntityToDto)
+                .toList();
+
+        return ResponseEntity.status(200).body(dtos);
     }
 
     @PostMapping("/recuperar-senha")
-    public ResponseEntity<String> recuperarSenha(@RequestParam String emailUsuario) {
-        System.out.println(emailUsuario);
+    public ResponseEntity<String> EnviarCodigoRecuperarSenha(@RequestParam String emailUsuario) {
 
-        if (!usuarioRepository.existsByEmail(emailUsuario)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Email não cadastrado");
-        }
-        JavaMail.sendEmail(emailUsuario);
+        usuarioService.enviarCodigoRecuperarSenha(emailUsuario);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Email enviado com sucesso");
     }
 
     @PostMapping("/recuperar-senha/validar-codigo")
-    public ResponseEntity<String> validarCodigoRecuperacaoSenha(@RequestBody String codigo) {
-        if (codigo.equals(JavaMail.getCode())) {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body("Código válido");
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("Código inválido");
+    public ResponseEntity<String> validarCodigoRecuperacaoSenha(@RequestBody UsuarioValidarSenhaDto validarSenhaDto) {
+        usuarioService.validarCodigoRecuperacaoSenha(validarSenhaDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Código Valido");
     }
 
     @PatchMapping("/recuperar-senha/nova-senha")
@@ -124,23 +130,23 @@ public class UsuarioController {
                 .body("Usuário não encontrado");
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginAuth loginRequest) {
-        Usuario usuario = usuarioRepository.findByEmail(loginRequest.getEmail());
-        if (usuario == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Email ou senha inválidos");
-        }
-
-        boolean senhaValida = PasswordUtil.senhaCorreta(loginRequest.getSenha(), usuario.getSenha());
-        if (!senhaValida) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Email ou senha inválidos");
-        }
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("Login realizado com sucesso");
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestBody LoginAuth loginRequest) {
+//        Usuario usuario = usuarioRepository.findByEmail(loginRequest.getEmail());
+//        if (usuario == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                    .body("Email ou senha inválidos");
+//        }
+//
+//        boolean senhaValida = PasswordUtil.senhaCorreta(loginRequest.getSenha(), usuario.getSenha());
+//        if (!senhaValida) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                    .body("Email ou senha inválidos");
+//        }
+//
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .body("Login realizado com sucesso");
+//    }
 
 
 }
