@@ -32,4 +32,20 @@ public class UsuarioMapper {
 
     }
 
+    public static Usuario usuarioAtualizarToUsuarioEntity(UsuarioAtualizarDto usuarioAtualizar){
+        if (usuarioAtualizar == null){
+            return null;
+        }
+
+        return Usuario.builder()
+                .nome(usuarioAtualizar.getNome())
+                .email(usuarioAtualizar.getEmail())
+                .senha(usuarioAtualizar.getSenha())
+                .telefone(usuarioAtualizar.getTelefone())
+                .data_nascimento(usuarioAtualizar.getData_nascimento())
+                .genero(usuarioAtualizar.getGenero())
+                .build();
+    }
+
+
 }

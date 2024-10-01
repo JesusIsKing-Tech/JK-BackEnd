@@ -22,6 +22,22 @@ public class PasswordUtil implements ValidacaoUsuarioStrategy {
     private static final String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})";
     private static final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
 
+    public static boolean validarSenha(String senha) {
+        if (senha == null) {
+            return false;
+        }
+        return pattern.matcher(senha).matches();
+    }
+    public static String respostaErroSenha() {
+        return """
+                Senha invalida, a senha deve conter:
+                1 letra maiúscula,
+                1 letra minúscula,
+                1 número,
+                1 caractere especial,
+                no minimo 6 caracteres.
+                """;
+    }
 
     @Override
     public boolean validar(Usuario usuario) {
