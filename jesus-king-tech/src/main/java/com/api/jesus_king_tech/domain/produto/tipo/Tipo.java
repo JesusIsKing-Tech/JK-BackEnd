@@ -1,9 +1,7 @@
-package com.api.jesus_king_tech.produto;
+package com.api.jesus_king_tech.domain.produto.tipo;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.api.jesus_king_tech.domain.produto.categoria.Categoria;
 import jakarta.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "tipos")

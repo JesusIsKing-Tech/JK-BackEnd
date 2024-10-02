@@ -1,5 +1,14 @@
-package com.api.jesus_king_tech.produto;
+package com.api.jesus_king_tech.api.controller;
 
+import com.api.jesus_king_tech.domain.produto.categoria.Categoria;
+import com.api.jesus_king_tech.domain.produto.categoria.dto.CategoriaDTO;
+import com.api.jesus_king_tech.domain.produto.categoria.repository.CategoriaRepository;
+import com.api.jesus_king_tech.domain.produto.Produto;
+import com.api.jesus_king_tech.domain.produto.dto.ProdutoDTO;
+import com.api.jesus_king_tech.domain.produto.repository.ProdutoRepository;
+import com.api.jesus_king_tech.domain.produto.tipo.Tipo;
+import com.api.jesus_king_tech.domain.produto.tipo.dto.TipoDTO;
+import com.api.jesus_king_tech.domain.produto.tipo.repository.TipoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

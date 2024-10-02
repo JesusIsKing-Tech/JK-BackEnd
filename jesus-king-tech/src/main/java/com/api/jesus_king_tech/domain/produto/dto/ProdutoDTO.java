@@ -1,4 +1,7 @@
-package com.api.jesus_king_tech.produto;
+package com.api.jesus_king_tech.domain.produto.dto;
+
+import com.api.jesus_king_tech.domain.produto.categoria.dto.CategoriaDTO;
+import com.api.jesus_king_tech.domain.produto.tipo.dto.TipoDTO;
 
 public class ProdutoDTO {
 

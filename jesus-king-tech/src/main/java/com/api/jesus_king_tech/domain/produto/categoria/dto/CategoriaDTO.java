@@ -1,12 +1,9 @@
-package com.api.jesus_king_tech.produto;
+package com.api.jesus_king_tech.domain.produto.categoria.dto;
 
-import java.util.List;
-
-public class TipoDTO {
+public class CategoriaDTO {
 
     private Integer id;
     private String nome;
-    private CategoriaDTO categoria;
 
 
     public Integer getId() {
@@ -25,11 +22,6 @@ public class TipoDTO {
         this.nome = nome;
     }
 
-    public CategoriaDTO getCategoria() {
-        return categoria;
-    }
 
-    public void setCategoria(CategoriaDTO categoria) {
-        this.categoria = categoria;
-    }
 }
+

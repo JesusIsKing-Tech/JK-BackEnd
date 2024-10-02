@@ -1,8 +1,5 @@
-package com.api.jesus_king_tech.produto;
-import com.api.jesus_king_tech.produto.Produto;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+package com.api.jesus_king_tech.domain.produto.categoria;
 import jakarta.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "categorias")

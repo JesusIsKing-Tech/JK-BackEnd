@@ -1,7 +1,7 @@
-package com.api.jesus_king_tech.produto;
+package com.api.jesus_king_tech.domain.produto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.api.jesus_king_tech.domain.produto.categoria.Categoria;
+import com.api.jesus_king_tech.domain.produto.tipo.Tipo;
 import jakarta.persistence.*;
 
 @Entity
