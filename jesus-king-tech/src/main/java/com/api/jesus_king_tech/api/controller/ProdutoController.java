@@ -30,15 +30,11 @@ public class ProdutoController {
     @Autowired
     private TipoRepository tipoRepository;
 
-
-
     @PostMapping
     public ResponseEntity<String> cadastrarProduto(@RequestBody Produto produto) {
         produtoRepository.save(produto);
         return ResponseEntity.status(201).body("Produto cadastrado com sucesso!");
     }
-
-
 
     @PutMapping("/{id}")
     public ResponseEntity<String> atualizarProduto(@PathVariable Integer id, @RequestBody Produto produtoAtualizado) {
@@ -46,8 +42,6 @@ public class ProdutoController {
 
         if (produtoOpt.isPresent()) {
             Produto produto = produtoOpt.get();
-            produto.setNome(produtoAtualizado.getNome());
-            produto.setQuantidade(produtoAtualizado.getQuantidade());
             produto.setPeso(produtoAtualizado.getPeso());
             produto.setCategoria(produtoAtualizado.getCategoria());
             produto.setTipo(produtoAtualizado.getTipo());
@@ -58,35 +52,23 @@ public class ProdutoController {
         return ResponseEntity.status(404).body("Produto não encontrado");
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletarProduto(@PathVariable Integer id) {
         Optional<Produto> produtoOpt = produtoRepository.findById(id);
 
         if (produtoOpt.isPresent()) {
-            Produto produto = produtoOpt.get();
-
-            if (produto.getQuantidade() > 1) {
-                produto.setQuantidade(produto.getQuantidade() - 1);
-                produtoRepository.save(produto);
-                return ResponseEntity.status(200).body("Quantidade do produto diminuída!");
-            } else {
-                produtoRepository.delete(produto);
-                return ResponseEntity.status(200).body("Produto removido com sucesso!");
-            }
+            produtoRepository.delete(produtoOpt.get());
+            return ResponseEntity.status(200).body("Produto removido com sucesso!");
         }
 
         return ResponseEntity.status(404).body("Produto não encontrado");
     }
-
 
     @PostMapping("/categorias")
     public ResponseEntity<String> cadastrarCategoria(@RequestBody Categoria categoria) {
         categoriaRepository.save(categoria);
         return ResponseEntity.status(201).body("Categoria cadastrada com sucesso!");
     }
-
-
 
     @PutMapping("/categorias/{id}")
     public ResponseEntity<String> atualizarCategoria(@PathVariable Integer id, @RequestBody Categoria categoriaAtualizada) {
@@ -102,7 +84,6 @@ public class ProdutoController {
         return ResponseEntity.status(404).body("Categoria não encontrada");
     }
 
-
     @DeleteMapping("/categorias/{id}")
     public ResponseEntity<String> deletarCategoria(@PathVariable Integer id) {
         Optional<Categoria> categoriaOpt = categoriaRepository.findById(id);
@@ -115,14 +96,11 @@ public class ProdutoController {
         return ResponseEntity.status(404).body("Categoria não encontrada");
     }
 
-
     @PostMapping("/tipos")
     public ResponseEntity<String> cadastrarTipo(@RequestBody Tipo tipo) {
         tipoRepository.save(tipo);
         return ResponseEntity.status(201).body("Tipo cadastrado com sucesso!");
     }
-
-
 
     @PutMapping("/tipos/{id}")
     public ResponseEntity<String> atualizarTipo(@PathVariable Integer id, @RequestBody Tipo tipoAtualizado) {
@@ -138,7 +116,6 @@ public class ProdutoController {
         return ResponseEntity.status(404).body("Tipo não encontrado");
     }
 
-
     @DeleteMapping("/tipos/{id}")
     public ResponseEntity<String> deletarTipo(@PathVariable Integer id) {
         Optional<Tipo> tipoOpt = tipoRepository.findById(id);
@@ -151,16 +128,11 @@ public class ProdutoController {
         return ResponseEntity.status(404).body("Tipo não encontrado");
     }
 
-
-
-
-
     private ProdutoDTO toDTO(Produto produto) {
         ProdutoDTO dto = new ProdutoDTO();
         dto.setId(produto.getId());
-        dto.setNome(produto.getNome());
-        dto.setQuantidade(produto.getQuantidade());
         dto.setPeso(produto.getPeso());
+        dto.setDataEntrada(produto.getDataEntrada());
 
         if (produto.getCategoria() != null) {
             CategoriaDTO categoriaDTO = new CategoriaDTO();
@@ -182,18 +154,8 @@ public class ProdutoController {
         dto.setId(tipo.getId());
         dto.setNome(tipo.getNome());
 
-        if (tipo.getCategoria() != null) {
-            CategoriaDTO categoriaDTO = new CategoriaDTO();
-            categoriaDTO.setId(tipo.getCategoria().getId());
-            categoriaDTO.setNome(tipo.getCategoria().getNome());
-            dto.setCategoria(categoriaDTO);
-        }
-
         return dto;
     }
-
-
-
 
     @GetMapping
     public ResponseEntity<List<ProdutoDTO>> listarTodosProdutos() {
@@ -202,7 +164,6 @@ public class ProdutoController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(produtosDTO);
     }
-
 
     @GetMapping("/categorias")
     public ResponseEntity<List<CategoriaDTO>> listarTodasCategorias() {
@@ -225,10 +186,4 @@ public class ProdutoController {
         return ResponseEntity.ok(tiposDTO);
     }
 
-
-
-
-
 }
-
-

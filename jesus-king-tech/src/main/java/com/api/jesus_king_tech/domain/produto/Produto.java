@@ -3,6 +3,7 @@ package com.api.jesus_king_tech.domain.produto;
 import com.api.jesus_king_tech.domain.produto.categoria.Categoria;
 import com.api.jesus_king_tech.domain.produto.tipo.Tipo;
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "produtos")
@@ -12,18 +13,17 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String nome;
-
-    private Integer quantidade;
-
     private Double peso;
 
+    @Column(name = "dtEntrada")
+    private LocalDate dataEntrada = LocalDate.now();
+
     @ManyToOne
-    @JoinColumn(name = "fk_categoria")
+    @JoinColumn(name = "fk_categoria", nullable = false)
     private Categoria categoria;
 
     @ManyToOne
-    @JoinColumn(name = "fk_tipo")
+    @JoinColumn(name = "fk_tipo", nullable = false)
     private Tipo tipo;
 
 
@@ -35,28 +35,20 @@ public class Produto {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public Integer getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(Integer quantidade) {
-        this.quantidade = quantidade;
-    }
-
     public Double getPeso() {
         return peso;
     }
 
     public void setPeso(Double peso) {
         this.peso = peso;
+    }
+
+    public LocalDate getDataEntrada() {
+        return dataEntrada;
+    }
+
+    public void setDataEntrada(LocalDate dataEntrada) {
+        this.dataEntrada = dataEntrada;
     }
 
     public Categoria getCategoria() {
