@@ -4,6 +4,7 @@ import com.api.jesus_king_tech.endereco.dto.EnderecoDTO;
 import com.api.jesus_king_tech.endereco.entity.Endereco;
 import com.api.jesus_king_tech.endereco.service.EnderecoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +20,15 @@ public class EnderecoController {
     private EnderecoService enderecoService;
 
     @GetMapping
-    public List<Endereco> getAllEnderecos() {
-        return enderecoService.findAll();
+    public ResponseEntity<List<Endereco>> getAllEnderecos() {
+        List<Endereco> enderecos = enderecoService.findAll();
+        if (enderecos.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(enderecos, HttpStatus.OK);
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Endereco> getEnderecoById(@PathVariable Integer id) {
@@ -29,6 +36,7 @@ public class EnderecoController {
         return endereco.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
 
     @PostMapping
     public ResponseEntity<Endereco> criarEndereco(@Valid @RequestBody EnderecoDTO enderecoDTO) {
@@ -38,6 +46,9 @@ public class EnderecoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarEndereco(@PathVariable Integer id) {
+        if (!enderecoService.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
         enderecoService.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -37,4 +37,10 @@ public class EnderecoService {
     public void delete(Integer id) {
         enderecoRepository.deleteById(id);
     }
+
+    public boolean existsById(Integer id) {
+        return enderecoRepository.existsById(id);
+    }
+
+
 }
