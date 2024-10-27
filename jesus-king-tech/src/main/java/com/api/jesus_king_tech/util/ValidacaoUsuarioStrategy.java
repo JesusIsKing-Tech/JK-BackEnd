@@ -1,6 +1,6 @@
 package com.api.jesus_king_tech.util;
 
-import com.api.jesus_king_tech.cadastro_login.Usuario;
+import com.api.jesus_king_tech.domain.usuario.Usuario;
 import org.springframework.stereotype.Component;
 
 @Component
