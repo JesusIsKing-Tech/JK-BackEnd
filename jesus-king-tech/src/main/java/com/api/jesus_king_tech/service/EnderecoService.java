@@ -1,14 +1,13 @@
-package com.api.jesus_king_tech.endereco.service;
+package com.api.jesus_king_tech.service;
 
-import com.api.jesus_king_tech.endereco.dto.EnderecoDTO;
-import com.api.jesus_king_tech.endereco.dto.EnderecoMapper;
-import com.api.jesus_king_tech.endereco.dto.EnderecoResponse;
-import com.api.jesus_king_tech.endereco.entity.Endereco;
-import com.api.jesus_king_tech.endereco.repository.EnderecoRepository;
-import com.api.jesus_king_tech.endereco.repository.ViaCepClient;
+import com.api.jesus_king_tech.domain.endereco.dto.EnderecoDTO;
+import com.api.jesus_king_tech.domain.endereco.dto.EnderecoMapper;
+import com.api.jesus_king_tech.domain.endereco.dto.EnderecoResponse;
+import com.api.jesus_king_tech.domain.endereco.Endereco;
+import com.api.jesus_king_tech.domain.endereco.repository.EnderecoRepository;
+import com.api.jesus_king_tech.domain.endereco.repository.ViaCepClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Comparator;
 import java.util.List;

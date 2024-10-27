@@ -1,9 +1,8 @@
-package com.api.jesus_king_tech.endereco.controller;
+package com.api.jesus_king_tech.api.controller;
 
-import com.api.jesus_king_tech.endereco.dto.EnderecoDTO;
-import com.api.jesus_king_tech.endereco.dto.EnderecoResponse;
-import com.api.jesus_king_tech.endereco.entity.Endereco;
-import com.api.jesus_king_tech.endereco.service.EnderecoService;
+import com.api.jesus_king_tech.domain.endereco.dto.EnderecoDTO;
+import com.api.jesus_king_tech.domain.endereco.dto.EnderecoResponse;
+import com.api.jesus_king_tech.service.EnderecoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/enderecos")
