@@ -1,9 +1,7 @@
 package com.api.jesus_king_tech.util;
 
-import com.api.jesus_king_tech.cadastro_login.Usuario;
-import com.api.jesus_king_tech.cadastro_login.UsuarioRepository;
+import com.api.jesus_king_tech.domain.usuario.Usuario;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.regex.Pattern;
 
@@ -24,8 +22,7 @@ public class EmailUtil implements ValidacaoUsuarioStrategy {
 
     @Override
     public String respostaErro() {
-        return "O email fornecido é inválido.\n" +
-                "Por favor, insira um email no formato correto, como exemplo@dominio.com.";
+        return "O email fornecido é inválido. Por favor, insira um email no formato correto, como exemplo@dominio.com.";
     }
 }
 
