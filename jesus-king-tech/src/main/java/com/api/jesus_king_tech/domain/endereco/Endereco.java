@@ -1,4 +1,4 @@
-package com.api.jesus_king_tech.endereco.entity;
+package com.api.jesus_king_tech.domain.endereco;
 
 
 
@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Entity

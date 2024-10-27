@@ -1,7 +1,7 @@
-package com.api.jesus_king_tech.endereco.dto;
+package com.api.jesus_king_tech.domain.endereco.dto;
 
 
-import com.api.jesus_king_tech.endereco.entity.Endereco;
+import com.api.jesus_king_tech.domain.endereco.Endereco;
 
 public class EnderecoMapper {
 

@@ -1,4 +1,4 @@
-package com.api.jesus_king_tech.endereco.dto;
+package com.api.jesus_king_tech.domain.endereco.dto;
 
 
 import lombok.*;
