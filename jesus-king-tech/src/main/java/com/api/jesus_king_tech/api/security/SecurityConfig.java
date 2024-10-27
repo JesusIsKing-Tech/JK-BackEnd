@@ -1,4 +1,4 @@
-package com.api.jesus_king_tech.api.config;
+package com.api.jesus_king_tech.api.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,18 +13,18 @@ public class SecurityConfig {
 
 //    Configurações de springSecurity
 
-    @Bean
-    public SecurityFilterChain web(HttpSecurity http) throws Exception {
-        System.out.println("Permissão geral adicionada");
-        http
-                .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
-
-        return http.build();
-    }
+//    @Bean (Não precisa, pois JWT está configurado)
+//    public SecurityFilterChain web(HttpSecurity http) throws Exception {
+//        System.out.println("Permissão geral adicionada");
+//        http
+//                .authorizeHttpRequests((authorize) -> authorize
+//                        .requestMatchers("/**").permitAll()
+//                        .anyRequest().authenticated()
+//                )
+//                .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
+//
+//        return http.build();
+//    }
 
     //    Configuração de hash de senhas
     @Bean

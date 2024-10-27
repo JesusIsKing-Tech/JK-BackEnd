@@ -2,19 +2,20 @@ package com.api.jesus_king_tech.util;
 
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
 
 @Component
-public class PasswordUtil implements ValidacaoUsuarioStrategy {
+public class PasswordUtil extends BCryptPasswordEncoder implements ValidacaoUsuarioStrategy {
 
     public static String encoder(String senha) {
         BCryptPasswordEncoder encoderSenha = new BCryptPasswordEncoder();
         return encoderSenha.encode(senha);
     }
 
-    public static boolean senhaCorreta(String senha, String senhaEncoded) {
+    public static boolean matches(String senha, String senhaEncoded) {
         BCryptPasswordEncoder encoderSenha = new BCryptPasswordEncoder();
         return encoderSenha.matches(senha, senhaEncoded);
     }
@@ -58,4 +59,5 @@ public class PasswordUtil implements ValidacaoUsuarioStrategy {
                 no minimo 6 caracteres.
                 """;
     }
+
 }

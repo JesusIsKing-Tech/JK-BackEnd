@@ -1,5 +1,7 @@
 package com.api.jesus_king_tech.api.controller;
 
+import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioLoginDto;
+import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioTokenDto;
 import com.api.jesus_king_tech.domain.usuario.dto.*;
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.service.UsuarioService;
@@ -25,7 +27,7 @@ public class UsuarioController {
     private List<ValidacaoUsuarioStrategy> validacoes;
 
 
-    @PostMapping()
+    @PostMapping("/cadastrar")
     public ResponseEntity<UsuarioResponseDto> cadastrarUsuario(@Valid @RequestBody UsuarioCriarDto novoUsuario) {
 
         Usuario usuarioSalvar = UsuarioMapper.usuarioDtoToEntity(novoUsuario);
@@ -98,5 +100,13 @@ public class UsuarioController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioResponseDto);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
+        System.out.println("Chegou no controller, iniciando processo de auth");
+        UsuarioTokenDto usuarioToken = usuarioService.autenticar(usuarioLoginDto);
+
+        return ResponseEntity.status(200).body(usuarioToken);
     }
 }
