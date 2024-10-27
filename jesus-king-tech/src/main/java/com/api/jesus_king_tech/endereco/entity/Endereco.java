@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -23,24 +24,20 @@ public class Endereco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "O CEP não pode estar vazio.")
-    @Size(min = 8, max = 8, message = "O CEP deve ter 8 caracteres.")
+    @NotBlank(message = "O campo CEP é obrigatório.")
     private String cep;
 
-    @NotBlank(message = "O logradouro não pode estar vazio.")
+    @NotBlank(message = "O campo logradouro é obrigatório.")
     private String logradouro;
 
-    @NotBlank(message = "O número não pode estar vazio.")
-    private String numero;
-
-    @NotBlank(message = "O bairro não pode estar vazio.")
+    @NotBlank(message = "O campo bairro é obrigatório.")
     private String bairro;
 
-    @NotBlank(message = "A localidade não pode estar vazia.")
+    @NotBlank(message = "O campo localidade é obrigatório.")
     private String localidade;
 
-    @NotBlank(message = "A UF não pode estar vazia.")
-    @Size(min = 2, max = 2, message = "A UF deve ter 2 caracteres.")
+    @NotBlank(message = "O campo UF é obrigatório.")
+    @Pattern(regexp = "[A-Z]{2}", message = "UF deve ser um código de 2 letras.")
     private String uf;
 
 

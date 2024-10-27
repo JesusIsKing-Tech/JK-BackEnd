@@ -1,12 +1,19 @@
 package com.api.jesus_king_tech.endereco.service;
 
 import com.api.jesus_king_tech.endereco.dto.EnderecoDTO;
+import com.api.jesus_king_tech.endereco.dto.EnderecoMapper;
+import com.api.jesus_king_tech.endereco.dto.EnderecoResponse;
 import com.api.jesus_king_tech.endereco.entity.Endereco;
 import com.api.jesus_king_tech.endereco.repository.EnderecoRepository;
+import com.api.jesus_king_tech.endereco.repository.ViaCepClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EnderecoService {
@@ -14,33 +21,58 @@ public class EnderecoService {
     @Autowired
     private EnderecoRepository enderecoRepository;
 
+    @Autowired
+    private ViaCepClient viaCepClient;
+
+
+
     public List<Endereco> findAll() {
         return enderecoRepository.findAll();
     }
 
-    public Optional<Endereco> findById(Integer id) {
-        return enderecoRepository.findById(id);
+    public Optional<EnderecoResponse> findById(Integer id) {
+        Optional<Endereco> endereco = enderecoRepository.findById(id);
+        return endereco.map(EnderecoMapper::toResponse);
     }
 
-    public Endereco save(EnderecoDTO enderecoDTO) {
-        Endereco endereco = Endereco.builder()
-                .cep(enderecoDTO.getCep())
-                .logradouro(enderecoDTO.getLogradouro())
-                .numero(enderecoDTO.getNumero())
-                .bairro(enderecoDTO.getBairro())
-                .localidade(enderecoDTO.getLocalidade())
-                .uf(enderecoDTO.getUf())
-                .build();
-        return enderecoRepository.save(endereco);
-    }
-
-    public void delete(Integer id) {
-        enderecoRepository.deleteById(id);
+    public EnderecoResponse save(EnderecoDTO enderecoDTO) {
+        EnderecoDTO viaCepData = viaCepClient.buscarEnderecoPorCep(enderecoDTO.getCep());
+        if (viaCepData != null) {
+            Endereco endereco = EnderecoMapper.toEntity(viaCepData);
+            enderecoRepository.save(endereco);
+            return EnderecoMapper.toResponse(endereco);
+        }
+        return null;
     }
 
     public boolean existsById(Integer id) {
         return enderecoRepository.existsById(id);
     }
 
+    public void delete(Integer id) {
+        enderecoRepository.deleteById(id);
+    }
 
-}
+
+    public EnderecoResponse buscarEnderecoPorCep(String cep) {
+        EnderecoDTO enderecoDTO = viaCepClient.buscarEnderecoPorCep(cep);
+        Endereco endereco = EnderecoMapper.toEntity(enderecoDTO);
+        enderecoRepository.save(endereco);
+        return EnderecoMapper.toResponse(endereco);
+    }
+
+
+    public List<EnderecoResponse> getEnderecosOrdenados() {
+        List<Endereco> enderecos = enderecoRepository.findAll();
+        return enderecos.stream()
+                .sorted(Comparator.comparing(Endereco::getLogradouro))
+                .map(EnderecoMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+        }
+
+
+
+
+

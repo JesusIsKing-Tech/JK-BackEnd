@@ -1,6 +1,7 @@
 package com.api.jesus_king_tech.endereco.controller;
 
 import com.api.jesus_king_tech.endereco.dto.EnderecoDTO;
+import com.api.jesus_king_tech.endereco.dto.EnderecoResponse;
 import com.api.jesus_king_tech.endereco.entity.Endereco;
 import com.api.jesus_king_tech.endereco.service.EnderecoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,41 +17,58 @@ import java.util.Optional;
 @RequestMapping("/enderecos")
 public class EnderecoController {
 
+
     @Autowired
     private EnderecoService enderecoService;
 
     @GetMapping
-    public ResponseEntity<List<Endereco>> getAllEnderecos() {
-        List<Endereco> enderecos = enderecoService.findAll();
+    public ResponseEntity<List<EnderecoResponse>> getAllEnderecos() {
+        List<EnderecoResponse> enderecos = enderecoService.getEnderecosOrdenados();
         if (enderecos.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-        return new ResponseEntity<>(enderecos, HttpStatus.OK);
+        return ResponseEntity.ok(enderecos);
     }
-
-
 
     @GetMapping("/{id}")
-    public ResponseEntity<Endereco> getEnderecoById(@PathVariable Integer id) {
-        Optional<Endereco> endereco = enderecoService.findById(id);
-        return endereco.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<EnderecoResponse> getEnderecoById(@PathVariable Integer id) {
+        return enderecoService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-
     @PostMapping
-    public ResponseEntity<Endereco> criarEndereco(@Valid @RequestBody EnderecoDTO enderecoDTO) {
-        Endereco novoEndereco = enderecoService.save(enderecoDTO);
-        return ResponseEntity.status(201).body(novoEndereco);
+    public ResponseEntity<EnderecoResponse> criarEndereco(@Valid @RequestBody EnderecoDTO enderecoDTO) {
+        EnderecoResponse novoEndereco = enderecoService.save(enderecoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoEndereco);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarEndereco(@PathVariable Integer id) {
         if (!enderecoService.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         enderecoService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @GetMapping("/buscar/{cep}")
+    public ResponseEntity<EnderecoResponse> buscarEnderecoPorCep(@PathVariable String cep) {
+        EnderecoResponse endereco = enderecoService.buscarEnderecoPorCep(cep);
+        if (endereco == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(endereco);
+    }
+
+    @GetMapping("/ordenados")
+    public ResponseEntity<List<EnderecoResponse>> getEnderecosOrdenados() {
+        List<EnderecoResponse> enderecosOrdenados = enderecoService.getEnderecosOrdenados();
+        if (enderecosOrdenados.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.ok(enderecosOrdenados);
+    }
+
 }
 
