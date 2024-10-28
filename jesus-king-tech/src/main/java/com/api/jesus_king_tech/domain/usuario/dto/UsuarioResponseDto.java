@@ -1,5 +1,6 @@
 package com.api.jesus_king_tech.domain.usuario.dto;
 
+import com.api.jesus_king_tech.domain.endereco.Endereco;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,4 +15,6 @@ public class UsuarioResponseDto {
     private String telefone;
     private LocalDate data_nascimento;
     private String genero;
+
+    private Endereco endereco;
 }

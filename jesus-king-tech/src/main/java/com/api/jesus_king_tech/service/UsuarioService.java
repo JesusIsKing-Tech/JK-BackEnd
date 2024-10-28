@@ -1,7 +1,9 @@
 package com.api.jesus_king_tech.service;
 
 import com.api.jesus_king_tech.api.security.jwt.GerenciadorTokenJwt;
+import com.api.jesus_king_tech.domain.endereco.Endereco;
 import com.api.jesus_king_tech.domain.endereco.dto.EnderecoResponse;
+import com.api.jesus_king_tech.domain.endereco.repository.EnderecoRepository;
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioLoginDto;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioTokenDto;
@@ -47,6 +49,7 @@ public class UsuarioService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final EnderecoService enderecoService;
+    private final EnderecoRepository enderecoRepository;
 
 
     public Usuario criarUsuario(Usuario novoUsuario) {
@@ -63,6 +66,16 @@ public class UsuarioService {
 
         String hashSenha = passwordEncoder.encode(novoUsuario.getSenha());
         novoUsuario.setSenha(hashSenha);
+
+        Endereco novoEndereco = novoUsuario.getEndereco();
+        Endereco endereco = enderecoService.enderecoExiste(novoEndereco);
+
+        if (endereco == null) {
+         novoUsuario.setEndereco(enderecoRepository.save(novoEndereco));
+        }else {
+            novoUsuario.setEndereco(endereco);
+        }
+
 
         return usuarioRepository.save(novoUsuario);
     }

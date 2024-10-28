@@ -1,10 +1,7 @@
 package com.api.jesus_king_tech.service;
 
-import com.api.jesus_king_tech.domain.endereco.dto.EnderecoDTO;
-import com.api.jesus_king_tech.domain.endereco.dto.EnderecoMapper;
-import com.api.jesus_king_tech.domain.endereco.dto.EnderecoResponse;
+import com.api.jesus_king_tech.domain.endereco.dto.*;
 import com.api.jesus_king_tech.domain.endereco.Endereco;
-import com.api.jesus_king_tech.domain.endereco.dto.ListaEstaticaEnderecoResponse;
 import com.api.jesus_king_tech.domain.endereco.repository.EnderecoRepository;
 import com.api.jesus_king_tech.domain.endereco.repository.ViaCepClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +82,22 @@ public class EnderecoService {
 
         }
         return enderecos;
+    }
+
+    public Endereco enderecoExiste(Endereco enderecoCriarDto) {
+        Optional<Endereco> enderecoExistente =
+                enderecoRepository.findByCepAndLogradouroAndBairroAndLocalidadeAndUfAndNumeroAndComplemento(
+                enderecoCriarDto.getCep(),
+                enderecoCriarDto.getLogradouro(),
+                enderecoCriarDto.getBairro(),
+                enderecoCriarDto.getLocalidade(),
+                enderecoCriarDto.getUf(),
+                enderecoCriarDto.getNumero(),
+                enderecoCriarDto.getComplemento()
+        );
+
+        return enderecoExistente.orElse(null);
+
     }
 
 }
