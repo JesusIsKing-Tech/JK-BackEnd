@@ -1,5 +1,6 @@
 package com.api.jesus_king_tech.domain.usuario.dto;
 
+import com.api.jesus_king_tech.domain.endereco.dto.EnderecoMapper;
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioTokenDto;
 
@@ -15,6 +16,7 @@ public class UsuarioMapper {
                 .telefone(dto.getTelefone())
                 .data_nascimento(dto.getData_nascimento())
                 .genero(dto.getGenero())
+                .endereco(dto.getEndereco())
                 .build();
     }
 
@@ -29,6 +31,7 @@ public class UsuarioMapper {
                 .telefone(entity.getTelefone())
                 .data_nascimento(entity.getData_nascimento())
                 .genero(entity.getGenero())
+                .endereco(entity.getEndereco())
                 .build();
 
     }

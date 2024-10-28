@@ -32,4 +32,7 @@ public class Usuario {
     private String codigo_recuperar_senha;
     private LocalDateTime validade_codigo_senha;
 
+    @ManyToOne
+    private Endereco endereco;
+
 }

@@ -7,14 +7,10 @@ import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.service.UsuarioService;
 import com.api.jesus_king_tech.swagger.controllers_openApi.UsuariosControllerOpenApi;
 import com.api.jesus_king_tech.util.ValidacaoUsuarioStrategy;
-import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
