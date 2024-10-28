@@ -1,11 +1,13 @@
 package com.api.jesus_king_tech.service;
 
 import com.api.jesus_king_tech.api.security.jwt.GerenciadorTokenJwt;
+import com.api.jesus_king_tech.domain.endereco.dto.EnderecoResponse;
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioLoginDto;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioTokenDto;
 import com.api.jesus_king_tech.domain.usuario.dto.UsuarioMapper;
 import com.api.jesus_king_tech.domain.usuario.dto.UsuarioMudarSenhaDto;
+import com.api.jesus_king_tech.domain.usuario.dto.UsuarioResponseDto;
 import com.api.jesus_king_tech.domain.usuario.dto.UsuarioValidarSenhaDto;
 import com.api.jesus_king_tech.domain.usuario.repository.UsuarioRepository;
 import com.api.jesus_king_tech.exception.ExceptionHttp;
@@ -23,10 +25,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +46,8 @@ public class UsuarioService {
     private final GerenciadorTokenJwt gerenciadorTokenJwt;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final EnderecoService enderecoService;
+
 
     public Usuario criarUsuario(Usuario novoUsuario) {
         novoUsuario.setId(null);
@@ -181,4 +191,39 @@ public class UsuarioService {
         return UsuarioMapper.of(usuarioAutenticado, token);
 
     }
+
+
+
+
+    public String exportarUsuariosParaCsv() throws IOException {
+        List<Usuario> usuarios = listarUsuarios();
+        String caminhoArquivo = "usuarios.csv";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoArquivo))) {
+            writer.write("ID,Nome,Email,Telefone,Data de Nascimento,Gênero");
+            writer.newLine();
+
+            for (Usuario usuario : usuarios) {
+                String linha = String.join(",",
+                        usuario.getId().toString(),
+                        usuario.getNome(),
+                        usuario.getEmail(),
+                        usuario.getTelefone(),
+                        usuario.getData_nascimento().toString(),
+                        usuario.getGenero()
+                );
+                writer.write(linha);
+                writer.newLine();
+            }
+        }
+
+        return caminhoArquivo;
+    }
+
+
+
+
+
 }
+
+

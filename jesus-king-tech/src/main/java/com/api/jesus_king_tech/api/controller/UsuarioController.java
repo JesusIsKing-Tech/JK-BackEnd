@@ -6,13 +6,20 @@ import com.api.jesus_king_tech.domain.usuario.dto.*;
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.service.UsuarioService;
 import com.api.jesus_king_tech.util.ValidacaoUsuarioStrategy;
+import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -109,4 +116,20 @@ public class UsuarioController {
 
         return ResponseEntity.status(200).body(usuarioToken);
     }
+
+
+
+    @GetMapping("/exportar")
+    public ResponseEntity<String> exportarUsuarios() {
+        try {
+            String caminhoArquivo = usuarioService.exportarUsuariosParaCsv();
+            return ResponseEntity.ok("Usuários exportados com sucesso: " + caminhoArquivo);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao exportar usuários: " + e.getMessage());
+        }
+    }
+
+
+
 }
