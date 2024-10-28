@@ -29,6 +29,7 @@ public class Usuario {
     private String telefone;
     private LocalDate data_nascimento;
     private String genero;
+    private boolean receber_doacoes;
     private String codigo_recuperar_senha;
     private LocalDateTime validade_codigo_senha;
 

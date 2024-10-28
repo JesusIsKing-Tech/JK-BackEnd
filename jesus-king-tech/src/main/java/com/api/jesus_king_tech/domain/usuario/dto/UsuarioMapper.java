@@ -16,6 +16,7 @@ public class UsuarioMapper {
                 .telefone(dto.getTelefone())
                 .data_nascimento(dto.getData_nascimento())
                 .genero(dto.getGenero())
+                .receber_doacoes(dto.isReceber_doacoes())
                 .endereco(dto.getEndereco())
                 .build();
     }
