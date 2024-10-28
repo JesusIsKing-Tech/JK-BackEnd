@@ -6,8 +6,6 @@ import com.api.jesus_king_tech.domain.endereco.Endereco;
 public class EnderecoMapper {
 
 
-
-
     public static Endereco toEntity(EnderecoDTO dto) {
         if (dto == null) {
             return null;
@@ -21,7 +19,6 @@ public class EnderecoMapper {
                 .uf(dto.getUf())
                 .build();
     }
-
 
     public static EnderecoDTO toDto(Endereco entity) {
         if (entity == null) {
@@ -37,10 +34,10 @@ public class EnderecoMapper {
                 .build();
     }
 
-    // Mapeamento manual de Entidade para Response
+    // Corrigido para receber Endereco em vez de EnderecoDTO
     public static EnderecoResponse toResponse(Endereco entity) {
         if (entity == null) {
-            return null;
+            return null; // Retorna null se o objeto Endereco for null
         }
 
         return EnderecoResponse.builder()
