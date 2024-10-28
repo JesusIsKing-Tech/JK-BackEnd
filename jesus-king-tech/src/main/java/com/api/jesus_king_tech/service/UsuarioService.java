@@ -206,6 +206,36 @@ public class UsuarioService {
     }
 
 
+    public List<Usuario> getUsuariosOrdenadosPorLogradouro() {
+        List<Usuario> usuarios = usuarioRepository.findAll(); // Obtenha todos os usuários
+        usuarios.sort(Comparator.comparing(usuario -> usuario.getEndereco().getLogradouro()));
+        return usuarios;
+    }
+
+
+    public Optional<Usuario> buscarUsuarioPorLogradouro(String logradouro) {
+        List<Usuario> usuariosOrdenados = getUsuariosOrdenadosPorLogradouro();
+
+        int baixo = 0;
+        int alto = usuariosOrdenados.size() - 1;
+
+        while (baixo <= alto) {
+            int meio = (baixo + alto) / 2;
+            String logradouroMeio = usuariosOrdenados.get(meio).getEndereco().getLogradouro();
+
+            if (logradouroMeio.equals(logradouro)) {
+                return Optional.of(usuariosOrdenados.get(meio));
+            } else if (logradouroMeio.compareTo(logradouro) < 0) {
+                baixo = meio + 1;
+            } else {
+                alto = meio - 1;
+            }
+        }
+
+        return Optional.empty();
+    }
+
+
 
 
     public String exportarUsuariosParaCsv() throws IOException {

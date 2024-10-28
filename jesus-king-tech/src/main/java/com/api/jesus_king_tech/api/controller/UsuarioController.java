@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -112,6 +113,14 @@ import java.util.List;
         UsuarioTokenDto usuarioToken = usuarioService.autenticar(usuarioLoginDto);
 
         return ResponseEntity.status(200).body(usuarioToken);
+    }
+
+
+    @GetMapping("/buscar-logradouro/{logradouro}")
+    public ResponseEntity<Usuario> buscarUsuarioPorLogradouro(@PathVariable String logradouro) {
+        Optional<Usuario> usuario = usuarioService.buscarUsuarioPorLogradouro(logradouro);
+        return usuario.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
 

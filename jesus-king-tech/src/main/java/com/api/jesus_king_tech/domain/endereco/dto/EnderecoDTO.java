@@ -1,6 +1,7 @@
 package com.api.jesus_king_tech.domain.endereco.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,11 @@ public class EnderecoDTO {
 
     @NotBlank(message = "Logradouro é obrigatório")
     private String logradouro;
+
+    @NotBlank(message = "Número é obrigatório")
+    private String numero;
+
+    private String complemento;
 
     @NotBlank(message = "Bairro é obrigatório")
     private String bairro;

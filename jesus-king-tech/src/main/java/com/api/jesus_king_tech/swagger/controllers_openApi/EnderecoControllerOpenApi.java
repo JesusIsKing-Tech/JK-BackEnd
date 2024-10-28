@@ -2,12 +2,7 @@ package com.api.jesus_king_tech.swagger.controllers_openApi;
 
 import com.api.jesus_king_tech.domain.endereco.dto.EnderecoDTO;
 import com.api.jesus_king_tech.domain.endereco.dto.EnderecoResponse;
-import com.api.jesus_king_tech.domain.produto.Produto;
-import com.api.jesus_king_tech.domain.produto.categoria.Categoria;
-import com.api.jesus_king_tech.domain.produto.categoria.dto.CategoriaDTO;
-import com.api.jesus_king_tech.domain.produto.dto.ProdutoDTO;
-import com.api.jesus_king_tech.domain.produto.tipo.Tipo;
-import com.api.jesus_king_tech.domain.produto.tipo.dto.TipoDTO;
+import com.api.jesus_king_tech.domain.endereco.dto.EnderecoViaCepDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +22,7 @@ public interface EnderecoControllerOpenApi {
 
     ResponseEntity<Void> deletarEndereco(@PathVariable Integer id);
 
-    ResponseEntity<EnderecoResponse> buscarEnderecoPorCep(@PathVariable String cep);
+    ResponseEntity<EnderecoViaCepDTO> buscarEnderecoPorCep(@PathVariable String cep);
 
     ResponseEntity<List<EnderecoResponse>> getEnderecosOrdenados();
 }
