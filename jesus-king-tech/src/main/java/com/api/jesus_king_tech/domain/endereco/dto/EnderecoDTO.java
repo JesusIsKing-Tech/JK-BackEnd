@@ -22,11 +22,6 @@ public class EnderecoDTO {
     @NotBlank(message = "Logradouro é obrigatório")
     private String logradouro;
 
-    @NotBlank(message = "Número é obrigatório.")
-    private String numero;
-
-    private String complemento;
-
     @NotBlank(message = "Bairro é obrigatório")
     private String bairro;
 

@@ -55,10 +55,14 @@ public class EnderecoService {
 
     public EnderecoResponse buscarEnderecoPorCep(String cep) {
         EnderecoDTO enderecoDTO = viaCepClient.buscarEnderecoPorCep(cep);
-        Endereco endereco = EnderecoMapper.toEntity(enderecoDTO);
-        enderecoRepository.save(endereco);
-        return EnderecoMapper.toResponse(endereco);
+
+        if (enderecoDTO == null || enderecoDTO.getLogradouro() == null) {
+            throw new IllegalArgumentException("Endereço não encontrado para o CEP: " + cep);
+        }
+
+        return EnderecoMapper.toResponse(EnderecoMapper.toEntity(enderecoDTO));
     }
+
 
 
     public List<EnderecoResponse> getEnderecosOrdenados() {
