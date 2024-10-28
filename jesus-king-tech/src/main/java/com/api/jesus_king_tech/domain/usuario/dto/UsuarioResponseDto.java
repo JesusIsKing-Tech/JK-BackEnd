@@ -15,6 +15,7 @@ public class UsuarioResponseDto {
     private String telefone;
     private LocalDate data_nascimento;
     private String genero;
+    private boolean receber_doacoes;
 
     private Endereco endereco;
 }
