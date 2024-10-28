@@ -9,6 +9,7 @@ import com.api.jesus_king_tech.domain.produto.repository.ProdutoRepository;
 import com.api.jesus_king_tech.domain.produto.tipo.Tipo;
 import com.api.jesus_king_tech.domain.produto.tipo.dto.TipoDTO;
 import com.api.jesus_king_tech.domain.produto.tipo.repository.TipoRepository;
+import com.api.jesus_king_tech.swagger.controllers_openApi.ProdutoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/produtos")
-public class ProdutoController {
+public class ProdutoController implements ProdutoControllerOpenApi {
 
     @Autowired
     private ProdutoRepository produtoRepository;
@@ -31,9 +32,9 @@ public class ProdutoController {
     private TipoRepository tipoRepository;
 
     @PostMapping
-    public ResponseEntity<String> cadastrarProduto(@RequestBody Produto produto) {
+    public ResponseEntity<Produto> cadastrarProduto(@RequestBody Produto produto) {
         produtoRepository.save(produto);
-        return ResponseEntity.status(201).body("Produto cadastrado com sucesso!");
+        return ResponseEntity.status(201).body( produtoRepository.save(produto));
     }
 
     @PutMapping("/{id}")

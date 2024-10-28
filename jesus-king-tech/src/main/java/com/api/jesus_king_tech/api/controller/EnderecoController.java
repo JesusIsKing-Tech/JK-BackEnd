@@ -3,6 +3,7 @@ package com.api.jesus_king_tech.api.controller;
 import com.api.jesus_king_tech.domain.endereco.dto.EnderecoDTO;
 import com.api.jesus_king_tech.domain.endereco.dto.EnderecoResponse;
 import com.api.jesus_king_tech.service.EnderecoService;
+import com.api.jesus_king_tech.swagger.controllers_openApi.EnderecoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/enderecos")
-public class EnderecoController {
+public class EnderecoController implements EnderecoControllerOpenApi {
 
 
     @Autowired

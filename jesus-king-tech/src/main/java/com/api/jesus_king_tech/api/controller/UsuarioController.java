@@ -5,6 +5,7 @@ import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioTokenDto;
 import com.api.jesus_king_tech.domain.usuario.dto.*;
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.service.UsuarioService;
+import com.api.jesus_king_tech.swagger.controllers_openApi.UsuariosControllerOpenApi;
 import com.api.jesus_king_tech.util.ValidacaoUsuarioStrategy;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/usuarios")
 @RequiredArgsConstructor
-public class UsuarioController {
+    public class UsuarioController implements UsuariosControllerOpenApi {
 
     @Autowired
     private UsuarioService usuarioService;
