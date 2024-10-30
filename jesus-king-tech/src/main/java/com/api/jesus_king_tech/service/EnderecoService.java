@@ -27,6 +27,10 @@ public class EnderecoService {
         this.listaEnderecos = new ListaEstaticaEnderecoResponse(100);
     }
 
+    public ListaEstaticaEnderecoResponse getListaEnderecos() {
+        return listaEnderecos;
+    }
+
     public EnderecoResponse save(EnderecoDTO enderecoDTO) {
         Endereco endereco = EnderecoMapper.toEntity(enderecoDTO);
         enderecoRepository.save(endereco);
@@ -64,7 +68,7 @@ public class EnderecoService {
 
 
     public List<EnderecoResponse> getEnderecosOrdenados() {
-        List<EnderecoResponse> enderecos = listaEnderecos.toList();
+        List<EnderecoResponse> enderecos = listaEnderecos.exibir();
         ListaEstaticaEnderecoResponse.quickSort(enderecos, 0, enderecos.size() - 1);
         return enderecos;
     }

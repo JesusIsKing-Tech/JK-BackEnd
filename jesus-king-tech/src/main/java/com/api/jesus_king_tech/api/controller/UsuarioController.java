@@ -18,7 +18,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -115,14 +117,61 @@ import java.util.Optional;
         return ResponseEntity.status(200).body(usuarioToken);
     }
 
+    @GetMapping("/ordenados-logradouro")
+    public ResponseEntity<List<Map<String, Object>>> getUsuariosOrdenadosPorLogradouro() {
+        List<Usuario> usuariosOrdenados = usuarioService.getUsuariosOrdenadosPorLogradouro();
 
-    @GetMapping("/buscar-logradouro/{logradouro}")
-    public ResponseEntity<Usuario> buscarUsuarioPorLogradouro(@PathVariable String logradouro) {
-        Optional<Usuario> usuario = usuarioService.buscarUsuarioPorLogradouro(logradouro);
-        return usuario.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        if (usuariosOrdenados.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        List<Map<String, Object>> usuariosPublicos = usuariosOrdenados.stream()
+                .map(usuario -> Map.of(
+                        "id", usuario.getId(),
+                        "nome", usuario.getNome(),
+                        "genero", usuario.getGenero(),
+                        "telefone", usuario.getTelefone(),
+                        "endereco", Map.of(
+                                "cep", usuario.getEndereco().getCep(),
+                                "logradouro", usuario.getEndereco().getLogradouro(),
+                                "numero", usuario.getEndereco().getNumero(),
+                                "complemento", usuario.getEndereco().getComplemento(),
+                                "bairro", usuario.getEndereco().getBairro(),
+                                "localidade", usuario.getEndereco().getLocalidade(),
+                                "uf", usuario.getEndereco().getUf()
+                        )
+                ))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(usuariosPublicos);
     }
 
+
+    @GetMapping("/buscar-logradouro/{logradouro}")
+    public ResponseEntity<List<Map<String, Object>>> buscarUsuarioPorLogradouro(@PathVariable String logradouro) {
+        Optional<Usuario> usuarioOpt = usuarioService.buscarUsuarioPorLogradouro(logradouro);
+
+        return usuarioOpt.map(usuario -> {
+            List<Map<String, Object>> usuariosPublicos = List.of(
+                    Map.of(
+                            "id", usuario.getId(),
+                            "nome", usuario.getNome(),
+                            "genero", usuario.getGenero(),
+                            "telefone", usuario.getTelefone(),
+                            "endereco", Map.of(
+                                    "cep", usuario.getEndereco().getCep(),
+                                    "logradouro", usuario.getEndereco().getLogradouro(),
+                                    "numero", usuario.getEndereco().getNumero(),
+                                    "complemento", usuario.getEndereco().getComplemento(),
+                                    "bairro", usuario.getEndereco().getBairro(),
+                                    "localidade", usuario.getEndereco().getLocalidade(),
+                                    "uf", usuario.getEndereco().getUf()
+                            )
+                    )
+            );
+            return ResponseEntity.ok(usuariosPublicos);
+        }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
 
 
     @GetMapping("/exportar")

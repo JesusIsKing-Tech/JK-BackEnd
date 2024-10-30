@@ -20,4 +20,16 @@ public class EnderecoResponse {
     private String uf;
 
 
+    @Override
+    public String toString() {
+        return "EnderecoResponse{" +
+                "cep='" + cep + '\'' +
+                ", logradouro='" + logradouro + '\'' +
+                ", numero='" + numero + '\'' +
+                ", complemento='" + complemento + '\'' +
+                ", bairro='" + bairro + '\'' +
+                ", localidade='" + localidade + '\'' +
+                ", uf='" + uf + '\'' +
+                '}';
+    }
 }
