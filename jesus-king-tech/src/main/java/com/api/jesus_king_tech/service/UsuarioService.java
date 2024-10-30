@@ -207,8 +207,26 @@ public class UsuarioService {
 
 
     public List<Usuario> getUsuariosOrdenadosPorLogradouro() {
-        List<Usuario> usuarios = usuarioRepository.findAll(); // Obtenha todos os usuários
-        usuarios.sort(Comparator.comparing(usuario -> usuario.getEndereco().getLogradouro()));
+        List<Usuario> usuarios = usuarioRepository.findAll();
+
+        int n = usuarios.size();
+        for (int i = 0; i < n - 1; i++) {
+            int menorIndice = i;
+
+            for (int j = i + 1; j < n; j++) {
+                String logradouroAtual = usuarios.get(j).getEndereco().getLogradouro();
+                String logradouroMenor = usuarios.get(menorIndice).getEndereco().getLogradouro();
+
+                if (logradouroAtual.compareTo(logradouroMenor) < 0) {
+                    menorIndice = j;
+                }
+            }
+
+            Usuario aux = usuarios.get(menorIndice);
+            usuarios.set(menorIndice, usuarios.get(i));
+            usuarios.set(i, aux);
+        }
+
         return usuarios;
     }
 

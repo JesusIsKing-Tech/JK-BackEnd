@@ -18,6 +18,7 @@ import java.util.List;
 public class EnderecoController implements EnderecoControllerOpenApi {
 
 
+
     @Autowired
     private EnderecoService enderecoService;
 
@@ -50,6 +51,16 @@ public class EnderecoController implements EnderecoControllerOpenApi {
         }
         enderecoService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
+    @GetMapping("/visualizar-lista")
+    public ResponseEntity<List<EnderecoResponse>> visualizarEnderecosListaEstatica() {
+        List<EnderecoResponse> enderecos = enderecoService.getListaEnderecos().exibir();
+        if (enderecos.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.ok(enderecos);
     }
 
     @GetMapping("/buscar/{cep}")
