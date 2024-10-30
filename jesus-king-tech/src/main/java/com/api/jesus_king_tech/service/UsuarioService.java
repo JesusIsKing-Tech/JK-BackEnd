@@ -243,24 +243,39 @@ public class UsuarioService {
         String caminhoArquivo = "usuarios.csv";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoArquivo))) {
-            writer.write("ID,Nome,Email,Telefone,Data de Nascimento,Gênero");
+            writer.write("ID,Nome,Email,Telefone,Data de Nascimento,Gênero,Logradouro,Número,Complemento,Bairro,Cidade,CEP");
             writer.newLine();
-
-            for (Usuario usuario : usuarios) {
-                String linha = String.join(",",
-                        usuario.getId().toString(),
-                        usuario.getNome(),
-                        usuario.getEmail(),
-                        usuario.getTelefone(),
-                        usuario.getData_nascimento().toString(),
-                        usuario.getGenero()
-                );
-                writer.write(linha);
-                writer.newLine();
-            }
+            exportarUsuarioRecursivo(writer, usuarios, 0);
         }
 
         return caminhoArquivo;
+    }
+
+    private void exportarUsuarioRecursivo(BufferedWriter writer, List<Usuario> usuarios, int index) throws IOException {
+        if (index >= usuarios.size()) {
+            return;
+        }
+
+        Usuario usuario = usuarios.get(index);
+        Endereco endereco = usuario.getEndereco();
+        String linha = String.join(",",
+                usuario.getId().toString(),
+                usuario.getNome(),
+                usuario.getEmail(),
+                usuario.getTelefone(),
+                usuario.getData_nascimento().toString(),
+                usuario.getGenero(),
+                endereco.getLogradouro(),
+                endereco.getNumero(),
+                endereco.getComplemento(),
+                endereco.getBairro(),
+                endereco.getLocalidade(),
+                endereco.getCep()
+        );
+        writer.write(linha);
+        writer.newLine();
+
+        exportarUsuarioRecursivo(writer, usuarios, index + 1);
     }
 
 
