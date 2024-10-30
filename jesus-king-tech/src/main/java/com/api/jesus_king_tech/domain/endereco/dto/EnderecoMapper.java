@@ -14,6 +14,8 @@ public class EnderecoMapper {
         return Endereco.builder()
                 .cep(dto.getCep())
                 .logradouro(dto.getLogradouro())
+                .numero(dto.getNumero())
+                .complemento(dto.getComplemento())
                 .bairro(dto.getBairro())
                 .localidade(dto.getLocalidade())
                 .uf(dto.getUf())
@@ -43,12 +45,28 @@ public class EnderecoMapper {
         return EnderecoResponse.builder()
                 .cep(entity.getCep())
                 .logradouro(entity.getLogradouro())
+                .numero(entity.getNumero())
+                .complemento(entity.getComplemento())
                 .bairro(entity.getBairro())
                 .localidade(entity.getLocalidade())
                 .uf(entity.getUf())
                 .build();
     }
+
+    // Método de conversão para EnderecoViaCepDTO (sem número e complemento)
+    public static EnderecoViaCepDTO toViaCepDto(Endereco entity) {
+        if (entity == null) return null;
+
+        return new EnderecoViaCepDTO(
+                entity.getCep(),
+                entity.getLogradouro(),
+                entity.getBairro(),
+                entity.getLocalidade(),
+                entity.getUf()
+        );
+    }
 }
+
 
 
 

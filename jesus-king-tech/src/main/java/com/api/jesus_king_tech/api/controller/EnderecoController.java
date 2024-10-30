@@ -2,6 +2,7 @@ package com.api.jesus_king_tech.api.controller;
 
 import com.api.jesus_king_tech.domain.endereco.dto.EnderecoDTO;
 import com.api.jesus_king_tech.domain.endereco.dto.EnderecoResponse;
+import com.api.jesus_king_tech.domain.endereco.dto.EnderecoViaCepDTO;
 import com.api.jesus_king_tech.service.EnderecoService;
 import com.api.jesus_king_tech.swagger.controllers_openApi.EnderecoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,8 @@ public class EnderecoController implements EnderecoControllerOpenApi {
     }
 
     @GetMapping("/buscar/{cep}")
-    public ResponseEntity<EnderecoResponse> buscarEnderecoPorCep(@PathVariable String cep) {
-        EnderecoResponse endereco = enderecoService.buscarEnderecoPorCep(cep);
+    public ResponseEntity<EnderecoViaCepDTO> buscarEnderecoPorCep(@PathVariable String cep) {
+        EnderecoViaCepDTO endereco = enderecoService.buscarEnderecoPorCep(cep);
         if (endereco == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

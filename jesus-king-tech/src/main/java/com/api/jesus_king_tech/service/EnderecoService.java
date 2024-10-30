@@ -7,10 +7,8 @@ import com.api.jesus_king_tech.domain.endereco.repository.ViaCepClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class EnderecoService {
@@ -53,34 +51,21 @@ public class EnderecoService {
 
 
 
-    public EnderecoResponse buscarEnderecoPorCep(String cep) {
+    public EnderecoViaCepDTO buscarEnderecoPorCep(String cep) {
         EnderecoDTO enderecoDTO = viaCepClient.buscarEnderecoPorCep(cep);
 
         if (enderecoDTO == null || enderecoDTO.getLogradouro() == null) {
             throw new IllegalArgumentException("Endereço não encontrado para o CEP: " + cep);
         }
 
-        return EnderecoMapper.toResponse(EnderecoMapper.toEntity(enderecoDTO));
+        return EnderecoMapper.toViaCepDto(EnderecoMapper.toEntity(enderecoDTO));
     }
 
 
 
     public List<EnderecoResponse> getEnderecosOrdenados() {
         List<EnderecoResponse> enderecos = listaEnderecos.toList();
-
-        int n = enderecos.size();
-        for (int i = 0; i < n - 1; i++) {
-            int indexMenor = i;
-            for (int j = i + 1; j < n; j++) {
-                if (enderecos.get(j).getLogradouro().compareTo(enderecos.get(indexMenor).getLogradouro()) < 0) {
-                    indexMenor = j;
-                }
-                EnderecoResponse temp = enderecos.get(indexMenor);
-                enderecos.set(indexMenor, enderecos.get(i));
-                enderecos.set(i, temp);
-            }
-
-        }
+        ListaEstaticaEnderecoResponse.quickSort(enderecos, 0, enderecos.size() - 1);
         return enderecos;
     }
 

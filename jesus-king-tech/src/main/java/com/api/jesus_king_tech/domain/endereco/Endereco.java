@@ -29,7 +29,7 @@ public class Endereco {
     @NotBlank(message = "O campo logradouro é obrigatório.")
     private String logradouro;
 
-    @NotBlank(message = "O campo Número é obrigatório.")
+    @NotBlank(message = "O campo número é obrigatório")
     private String numero;
 
     private String complemento;
