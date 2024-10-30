@@ -44,7 +44,7 @@ public interface UsuariosControllerOpenApi {
             @ApiResponse(responseCode = "200", description = "Código validado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro de validação")
     })
-    ResponseEntity<String> validarCodigoRecuperacaoSenha(@RequestBody UsuarioValidarSenhaDto validarSenhaDto);
+    ResponseEntity<String> validarCodigoRecuperacaoSenha(@RequestBody UsuarioValidarCodigoDto validarSenhaDto);
 
     @Operation(summary = "Alterar senha do usuário")
     @ApiResponses(value = {

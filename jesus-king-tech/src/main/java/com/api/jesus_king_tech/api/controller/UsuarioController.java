@@ -1,5 +1,7 @@
 package com.api.jesus_king_tech.api.controller;
 
+import com.api.jesus_king_tech.api.observer.AdminEmailObserver;
+import com.api.jesus_king_tech.api.observer.UsuarioSubject;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioLoginDto;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioTokenDto;
 import com.api.jesus_king_tech.domain.usuario.dto.*;
@@ -33,6 +35,10 @@ import java.util.stream.Collectors;
     @Autowired
     private List<ValidacaoUsuarioStrategy> validacoes;
 
+    @Autowired
+    private UsuarioSubject usuarioSubject;
+
+
 
     @PostMapping("/cadastrar")
     public ResponseEntity<UsuarioResponseDto> cadastrarUsuario(@Valid @RequestBody UsuarioCriarDto novoUsuario) {
@@ -64,6 +70,15 @@ import java.util.stream.Collectors;
         return ResponseEntity.status(200).body(dtos);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioResponseDto> buscarUsuarioPorId(@PathVariable Integer id) {
+        Usuario usuario = usuarioService.buscarUsuarioPorId(id);
+
+        UsuarioResponseDto usuarioResponseDto = UsuarioMapper.usuarioEntityToDto(usuario);
+
+        return ResponseEntity.status(200).body(usuarioResponseDto);
+    }
+
     @PostMapping("/recuperar-senha")
     public ResponseEntity<String> EnviarCodigoRecuperarSenha(@RequestParam String emailUsuario) {
 
@@ -73,8 +88,8 @@ import java.util.stream.Collectors;
     }
 
     @PostMapping("/recuperar-senha/validar-codigo")
-    public ResponseEntity<String> validarCodigoRecuperacaoSenha(@RequestBody UsuarioValidarSenhaDto validarSenhaDto) {
-        usuarioService.validarCodigoRecuperacaoSenha(validarSenhaDto);
+    public ResponseEntity<String> validarCodigoRecuperacaoSenha(@RequestBody UsuarioValidarCodigoDto validarCodigoDto) {
+        usuarioService.validarCodigoRecuperacaoSenha(validarCodigoDto);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Código Valido");

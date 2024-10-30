@@ -1,24 +1,24 @@
 package com.api.jesus_king_tech.service;
 
+import com.api.jesus_king_tech.api.observer.AdminEmailObserver;
+import com.api.jesus_king_tech.api.observer.UsuarioSubject;
 import com.api.jesus_king_tech.api.security.jwt.GerenciadorTokenJwt;
 import com.api.jesus_king_tech.domain.endereco.Endereco;
-import com.api.jesus_king_tech.domain.endereco.dto.EnderecoResponse;
 import com.api.jesus_king_tech.domain.endereco.repository.EnderecoRepository;
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioLoginDto;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioTokenDto;
 import com.api.jesus_king_tech.domain.usuario.dto.UsuarioMapper;
 import com.api.jesus_king_tech.domain.usuario.dto.UsuarioMudarSenhaDto;
-import com.api.jesus_king_tech.domain.usuario.dto.UsuarioResponseDto;
-import com.api.jesus_king_tech.domain.usuario.dto.UsuarioValidarSenhaDto;
+import com.api.jesus_king_tech.domain.usuario.dto.UsuarioValidarCodigoDto;
 import com.api.jesus_king_tech.domain.usuario.repository.UsuarioRepository;
 import com.api.jesus_king_tech.exception.ExceptionHttp;
 import com.api.jesus_king_tech.service.JavaMailRecuperacaoSenha.JavaMail;
 import com.api.jesus_king_tech.util.PasswordUtil;
 import com.api.jesus_king_tech.util.ValidacaoUsuarioStrategy;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -39,7 +39,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class UsuarioService {
 
 //    Injetando dependencias da classe service
@@ -50,6 +50,20 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final EnderecoService enderecoService;
     private final EnderecoRepository enderecoRepository;
+
+    private final UsuarioSubject usuarioSubject;
+
+    public UsuarioService(UsuarioRepository usuarioRepository, List<ValidacaoUsuarioStrategy> validacoes, GerenciadorTokenJwt gerenciadorTokenJwt, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, EnderecoService enderecoService, EnderecoRepository enderecoRepository, UsuarioSubject usuarioSubject, AdminEmailObserver adminEmailObserver) {
+        this.usuarioRepository = usuarioRepository;
+        this.validacoes = validacoes;
+        this.gerenciadorTokenJwt = gerenciadorTokenJwt;
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
+        this.enderecoService = enderecoService;
+        this.enderecoRepository = enderecoRepository;
+        this.usuarioSubject = usuarioSubject;
+        this.usuarioSubject.addObserver(adminEmailObserver);
+    }
 
 
     public Usuario criarUsuario(Usuario novoUsuario) {
@@ -75,6 +89,8 @@ public class UsuarioService {
         }else {
             novoUsuario.setEndereco(endereco);
         }
+
+        usuarioSubject.notifyObservers("usuario_criado", novoUsuario);
 
 
         return usuarioRepository.save(novoUsuario);
@@ -106,7 +122,7 @@ public class UsuarioService {
 
     }
 
-    public void validarCodigoRecuperacaoSenha(UsuarioValidarSenhaDto validarSenhaDto) {
+    public void validarCodigoRecuperacaoSenha(UsuarioValidarCodigoDto validarSenhaDto) {
         Optional<Usuario> usuarioEmail = usuarioRepository.findByEmail(validarSenhaDto.getEmail());
 
         if (usuarioEmail.isEmpty()){
@@ -297,9 +313,10 @@ public class UsuarioService {
     }
 
 
-
-
-
+    public Usuario buscarUsuarioPorId(Integer id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+    }
 }
 
 
