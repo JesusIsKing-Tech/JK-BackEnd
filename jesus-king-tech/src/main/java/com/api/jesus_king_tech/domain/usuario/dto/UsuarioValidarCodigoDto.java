@@ -5,8 +5,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UsuarioValidarSenhaDto {
+public class UsuarioValidarCodigoDto {
 
     private String email;
     private String codigo_recuperar_senha;
+
+
 }
