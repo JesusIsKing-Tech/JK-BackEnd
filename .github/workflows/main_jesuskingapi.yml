@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy WAR app to Azure Web App - jesuskingApi
+name: Build and deploy WAR app to Azure Web App - jesuskingapi
 
 on:
   push:
@@ -49,15 +49,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_28CE7D7335184B88AA30FEFE880672FF }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9160D51C021944FC84BCEDE93D965029 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C2B139CE1E3C45D1A51D50DDCAD2DE87 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D6F5BF25696E425E9FF8A49275A0193F }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_470DE1BFFEAE4543847C88F88D5A2DA3 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3EEAE39B82104989B13C175C24B840D9 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'jesuskingApi'
+          app-name: 'jesuskingapi'
           slot-name: 'Production'
           package: '*.war'
           
