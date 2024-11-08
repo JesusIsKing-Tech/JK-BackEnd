@@ -13,6 +13,7 @@ public class ExceptionHttp extends RuntimeException {
         this.status = status;
     }
 
+
     public HttpStatus getStatus() {
         return status;
     }

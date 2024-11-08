@@ -9,6 +9,9 @@ import com.api.jesus_king_tech.domain.produto.repository.ProdutoRepository;
 import com.api.jesus_king_tech.domain.produto.tipo.Tipo;
 import com.api.jesus_king_tech.domain.produto.tipo.dto.TipoDTO;
 import com.api.jesus_king_tech.domain.produto.tipo.repository.TipoRepository;
+import com.api.jesus_king_tech.service.CategoriaService;
+import com.api.jesus_king_tech.service.ProdutoService;
+import com.api.jesus_king_tech.service.TipoService;
 import com.api.jesus_king_tech.swagger.controllers_openApi.ProdutoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,171 +23,100 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/produtos")
-public class ProdutoController implements ProdutoControllerOpenApi {
+public class ProdutoController{
 
-    @Autowired
-    private ProdutoRepository produtoRepository;
+    private final ProdutoService produtoService;
+    private final CategoriaService categoriaService;
+    private final TipoService tipoService;
 
-    @Autowired
-    private CategoriaRepository categoriaRepository;
-
-    @Autowired
-    private TipoRepository tipoRepository;
+    public ProdutoController(ProdutoService produtoService, CategoriaService categoriaService, TipoService tipoService) {
+        this.produtoService = produtoService;
+        this.categoriaService = categoriaService;
+        this.tipoService = tipoService;
+    }
 
     @PostMapping
-    public ResponseEntity<Produto> cadastrarProduto(@RequestBody Produto produto) {
-        produtoRepository.save(produto);
-        return ResponseEntity.status(201).body( produtoRepository.save(produto));
+    public ResponseEntity<ProdutoDTO> cadastrarProduto(@RequestBody Produto produto) {
+        ProdutoDTO produtoDTO = produtoService.cadastrarProduto(produto);
+        return ResponseEntity.status(201).body(produtoDTO);
+    }
+
+
+    @GetMapping
+    public ResponseEntity<List<Produto>> listarProdutos() {
+        List<Produto> produtos = produtoService.listarTodos();
+        return ResponseEntity.ok(produtos);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> atualizarProduto(@PathVariable Integer id, @RequestBody Produto produtoAtualizado) {
-        Optional<Produto> produtoOpt = produtoRepository.findById(id);
-
-        if (produtoOpt.isPresent()) {
-            Produto produto = produtoOpt.get();
-            produto.setPeso(produtoAtualizado.getPeso());
-            produto.setCategoria(produtoAtualizado.getCategoria());
-            produto.setTipo(produtoAtualizado.getTipo());
-            produtoRepository.save(produto);
-            return ResponseEntity.status(200).body("Produto atualizado com sucesso!");
+    public ResponseEntity<ProdutoDTO> atualizarProduto(@PathVariable Integer id, @RequestBody Produto produtoAtualizado) {
+        ProdutoDTO produtoDTO = produtoService.atualizarProduto(id, produtoAtualizado);
+        if (produtoDTO != null) {
+            return ResponseEntity.ok(produtoDTO);
         }
-
-        return ResponseEntity.status(404).body("Produto não encontrado");
+        return ResponseEntity.status(404).body(null);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletarProduto(@PathVariable Integer id) {
-        Optional<Produto> produtoOpt = produtoRepository.findById(id);
-
-        if (produtoOpt.isPresent()) {
-            produtoRepository.delete(produtoOpt.get());
-            return ResponseEntity.status(200).body("Produto removido com sucesso!");
+        boolean deletado = produtoService.deletarProduto(id);
+        if (deletado) {
+            return ResponseEntity.ok("Produto removido com sucesso!");
         }
-
         return ResponseEntity.status(404).body("Produto não encontrado");
     }
 
+
+
     @PostMapping("/categorias")
-    public ResponseEntity<String> cadastrarCategoria(@RequestBody Categoria categoria) {
-        categoriaRepository.save(categoria);
-        return ResponseEntity.status(201).body("Categoria cadastrada com sucesso!");
+    public ResponseEntity<CategoriaDTO> cadastrarCategoria(@RequestBody Categoria categoria) {
+        CategoriaDTO categoriaDTO = categoriaService.cadastrarCategoria(categoria);
+        return ResponseEntity.status(201).body(categoriaDTO);
     }
 
     @PutMapping("/categorias/{id}")
-    public ResponseEntity<String> atualizarCategoria(@PathVariable Integer id, @RequestBody Categoria categoriaAtualizada) {
-        Optional<Categoria> categoriaOpt = categoriaRepository.findById(id);
-
-        if (categoriaOpt.isPresent()) {
-            Categoria categoria = categoriaOpt.get();
-            categoria.setNome(categoriaAtualizada.getNome());
-            categoriaRepository.save(categoria);
-            return ResponseEntity.status(200).body("Categoria atualizada com sucesso!");
-        }
-
-        return ResponseEntity.status(404).body("Categoria não encontrada");
+    public ResponseEntity<CategoriaDTO> atualizarCategoria(@PathVariable Integer id, @RequestBody Categoria categoriaAtualizada) {
+        CategoriaDTO categoriaDTO = categoriaService.atualizarCategoria(id, categoriaAtualizada);
+        return ResponseEntity.ok(categoriaDTO);
     }
 
     @DeleteMapping("/categorias/{id}")
-    public ResponseEntity<String> deletarCategoria(@PathVariable Integer id) {
-        Optional<Categoria> categoriaOpt = categoriaRepository.findById(id);
-
-        if (categoriaOpt.isPresent()) {
-            categoriaRepository.delete(categoriaOpt.get());
-            return ResponseEntity.status(200).body("Categoria removida com sucesso!");
-        }
-
-        return ResponseEntity.status(404).body("Categoria não encontrada");
-    }
-
-    @PostMapping("/tipos")
-    public ResponseEntity<String> cadastrarTipo(@RequestBody Tipo tipo) {
-        tipoRepository.save(tipo);
-        return ResponseEntity.status(201).body("Tipo cadastrado com sucesso!");
-    }
-
-    @PutMapping("/tipos/{id}")
-    public ResponseEntity<String> atualizarTipo(@PathVariable Integer id, @RequestBody Tipo tipoAtualizado) {
-        Optional<Tipo> tipoOpt = tipoRepository.findById(id);
-
-        if (tipoOpt.isPresent()) {
-            Tipo tipo = tipoOpt.get();
-            tipo.setNome(tipoAtualizado.getNome());
-            tipoRepository.save(tipo);
-            return ResponseEntity.status(200).body("Tipo atualizado com sucesso!");
-        }
-
-        return ResponseEntity.status(404).body("Tipo não encontrado");
-    }
-
-    @DeleteMapping("/tipos/{id}")
-    public ResponseEntity<String> deletarTipo(@PathVariable Integer id) {
-        Optional<Tipo> tipoOpt = tipoRepository.findById(id);
-
-        if (tipoOpt.isPresent()) {
-            tipoRepository.delete(tipoOpt.get());
-            return ResponseEntity.status(200).body("Tipo removido com sucesso!");
-        }
-
-        return ResponseEntity.status(404).body("Tipo não encontrado");
-    }
-
-    private ProdutoDTO toDTO(Produto produto) {
-        ProdutoDTO dto = new ProdutoDTO();
-        dto.setId(produto.getId());
-        dto.setPeso(produto.getPeso());
-        dto.setDataEntrada(produto.getDataEntrada());
-
-        if (produto.getCategoria() != null) {
-            CategoriaDTO categoriaDTO = new CategoriaDTO();
-            categoriaDTO.setId(produto.getCategoria().getId());
-            categoriaDTO.setNome(produto.getCategoria().getNome());
-            dto.setCategoria(categoriaDTO);
-        }
-
-        if (produto.getTipo() != null) {
-            TipoDTO tipoDTO = toDTO(produto.getTipo());
-            dto.setTipo(tipoDTO);
-        }
-
-        return dto;
-    }
-
-    private TipoDTO toDTO(Tipo tipo) {
-        TipoDTO dto = new TipoDTO();
-        dto.setId(tipo.getId());
-        dto.setNome(tipo.getNome());
-
-        return dto;
-    }
-
-    @GetMapping
-    public ResponseEntity<List<ProdutoDTO>> listarTodosProdutos() {
-        List<ProdutoDTO> produtosDTO = produtoRepository.findAll().stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(produtosDTO);
+    public ResponseEntity<Void> deletarCategoria(@PathVariable Integer id) {
+        categoriaService.removerCategoria(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/categorias")
     public ResponseEntity<List<CategoriaDTO>> listarTodasCategorias() {
-        List<CategoriaDTO> categoriasDTO = categoriaRepository.findAll().stream()
-                .map(categoria -> {
-                    CategoriaDTO dto = new CategoriaDTO();
-                    dto.setId(categoria.getId());
-                    dto.setNome(categoria.getNome());
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        List<CategoriaDTO> categoriasDTO = categoriaService.listarTodasCategorias();
         return ResponseEntity.ok(categoriasDTO);
+    }
+
+
+    @PostMapping("/tipos")
+    public ResponseEntity<TipoDTO> cadastrarTipo(@RequestBody Tipo tipo) {
+        TipoDTO tipoDTO = tipoService.cadastrarTipo(tipo);
+        return ResponseEntity.status(201).body(tipoDTO);
+    }
+
+    @PutMapping("/tipos/{id}")
+    public ResponseEntity<TipoDTO> atualizarTipo(@PathVariable Integer id, @RequestBody Tipo tipoAtualizado) {
+        TipoDTO tipoDTO = tipoService.atualizarTipo(id, tipoAtualizado);
+        return ResponseEntity.ok(tipoDTO);
+    }
+
+    @DeleteMapping("/tipos/{id}")
+    public ResponseEntity<Void> deletarTipo(@PathVariable Integer id) {
+        tipoService.removerTipo(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/tipos")
     public ResponseEntity<List<TipoDTO>> listarTodosTipos() {
-        List<TipoDTO> tiposDTO = tipoRepository.findAll().stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+        List<TipoDTO> tiposDTO = tipoService.listarTodosTipos();
         return ResponseEntity.ok(tiposDTO);
     }
+
+
 
 }
