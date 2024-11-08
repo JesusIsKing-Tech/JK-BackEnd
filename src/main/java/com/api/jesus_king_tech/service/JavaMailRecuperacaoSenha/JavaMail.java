@@ -1,6 +1,5 @@
 package com.api.jesus_king_tech.service.JavaMailRecuperacaoSenha;
 
-import com.api.jesus_king_tech.api.config.EnvironmentConfig;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -12,8 +11,8 @@ public class JavaMail {
     private static String code;
     public static void sendEmail(String to, String nomeUsuario){
 
-        final String email = EnvironmentConfig.get("EMAIL_EMAIL");
-        final String password = EnvironmentConfig.get("EMAIL_SENHA");
+        final String email = System.getenv("EMAIL_EMAIL");
+        final String password = System.getenv("EMAIL_SENHA");
 
         System.out.println(email);
         System.out.println(password);

@@ -1,7 +1,5 @@
 package com.api.jesus_king_tech.api.observer;
 
-import com.api.jesus_king_tech.api.config.EnvironmentConfig;
-import com.api.jesus_king_tech.service.JavaMailRecuperacaoSenha.EmailTemplate;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -11,8 +9,8 @@ import java.util.Properties;
 public class JavaMailObserver {
     public static void sendEmail(String to, String nomeUsuario, String emailUsuario){
 
-        final String email = EnvironmentConfig.get("EMAIL_EMAIL");
-        final String password = EnvironmentConfig.get("EMAIL_SENHA");
+        final String email = System.getenv("EMAIL_EMAIL");
+        final String password = System.getenv("EMAIL_SENHA");
 
         System.out.println(email);
         System.out.println(password);

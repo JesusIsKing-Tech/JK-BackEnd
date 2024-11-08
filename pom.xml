@@ -34,12 +34,7 @@
     <dependency> 
       <groupId>org.springframework.boot</groupId>  
       <artifactId>spring-boot-starter-data-jpa</artifactId> 
-    </dependency>  
-    <dependency> 
-      <groupId>com.h2database</groupId>  
-      <artifactId>h2</artifactId>  
-      <scope>runtime</scope> 
-    </dependency>  
+    </dependency>
     <dependency> 
       <groupId>org.springframework.boot</groupId>  
       <artifactId>spring-boot-starter-validation</artifactId> 
@@ -76,12 +71,7 @@
       <groupId>org.hibernate.validator</groupId>  
       <artifactId>hibernate-validator</artifactId>  
       <version>8.0.0.Final</version> 
-    </dependency>  
-    <dependency> 
-      <groupId>io.github.cdimascio</groupId>  
-      <artifactId>java-dotenv</artifactId>  
-      <version>5.2.2</version> 
-    </dependency>  
+    </dependency>
     <dependency> 
       <groupId>org.projectlombok</groupId>  
       <artifactId>lombok</artifactId>  
@@ -140,41 +130,7 @@
         <configuration> 
           <encoding>UTF-8</encoding> 
         </configuration> 
-      </plugin>  
-      <plugin> 
-        <groupId>com.microsoft.azure</groupId>  
-        <artifactId>azure-webapp-maven-plugin</artifactId>  
-        <version>2.5.0</version>  
-        <configuration>
-          <schemaVersion>v2</schemaVersion>
-          <subscriptionId>730821f5-03b2-482d-a8e1-b870a03fd0a0</subscriptionId>
-          <resourceGroup>jesus-king-tech-1731038057547-rg</resourceGroup>
-          <appName>jesus-king-tech-1731038057547</appName>
-          <pricingTier>P1v2</pricingTier>
-          <region>brazilsouth</region>
-          <runtime>
-            <os>Linux</os>
-            <javaVersion>Java 17</javaVersion>
-            <webContainer>Java SE</webContainer>
-          </runtime>
-          <deployment>
-            <resources>
-              <resource>
-                <directory>${project.basedir}/target</directory>
-                <includes>
-                  <include>*.jar</include>
-                </includes>
-              </resource>
-            </resources>
-          </deployment>
-          <appSettings>
-            <property>
-              <name>JAVA_OPTS</name>
-              <value>-Dserver.port=80</value>
-            </property>
-          </appSettings>
-        </configuration>
-      </plugin> 
+      </plugin>
     </plugins> 
   </build> 
 </project>
