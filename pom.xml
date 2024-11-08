@@ -12,7 +12,7 @@
   <groupId>com.api</groupId>  
   <artifactId>jesus-king-tech</artifactId>  
   <version>0.0.1-SNAPSHOT</version>  
-  <name>jesus-king-tech</name>
+  <name>jesus-king-tech</name>  
   <description>project for Spring Boot</description>  
   <url/>  
   <licenses> 
@@ -141,7 +141,40 @@
           <encoding>UTF-8</encoding> 
         </configuration> 
       </plugin>  
-
+      <plugin> 
+        <groupId>com.microsoft.azure</groupId>  
+        <artifactId>azure-webapp-maven-plugin</artifactId>  
+        <version>2.5.0</version>  
+        <configuration>
+          <schemaVersion>v2</schemaVersion>
+          <subscriptionId>730821f5-03b2-482d-a8e1-b870a03fd0a0</subscriptionId>
+          <resourceGroup>jesus-king-tech-1731038057547-rg</resourceGroup>
+          <appName>jesus-king-tech-1731038057547</appName>
+          <pricingTier>P1v2</pricingTier>
+          <region>brazilsouth</region>
+          <runtime>
+            <os>Linux</os>
+            <javaVersion>Java 17</javaVersion>
+            <webContainer>Java SE</webContainer>
+          </runtime>
+          <deployment>
+            <resources>
+              <resource>
+                <directory>${project.basedir}/target</directory>
+                <includes>
+                  <include>*.jar</include>
+                </includes>
+              </resource>
+            </resources>
+          </deployment>
+          <appSettings>
+            <property>
+              <name>JAVA_OPTS</name>
+              <value>-Dserver.port=80</value>
+            </property>
+          </appSettings>
+        </configuration>
+      </plugin> 
     </plugins> 
   </build> 
 </project>
