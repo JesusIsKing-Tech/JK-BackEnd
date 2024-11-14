@@ -1,5 +1,6 @@
 package com.api.jesus_king_tech.api.controller;
 
+import com.api.jesus_king_tech.domain.endereco.dto.ListaEstaticaEnderecoResponse;
 import com.api.jesus_king_tech.domain.produto.Produto;
 import com.api.jesus_king_tech.domain.produto.categoria.Categoria;
 import com.api.jesus_king_tech.domain.produto.categoria.dto.CategoriaDTO;
@@ -35,6 +36,7 @@ public class ProdutoController {
         this.tipoService = tipoService;
     }
 
+    @PostMapping
     public ResponseEntity<ProdutoDTO> cadastrarProduto(@RequestBody Produto produto) {
         ProdutoDTO produtoDTO = produtoService.cadastrarProduto(produto);
         return ResponseEntity.status(201).body(produtoDTO);
@@ -47,6 +49,7 @@ public class ProdutoController {
         return ResponseEntity.ok(produtos);
     }
 
+    @PutMapping("/{id}")
     public ResponseEntity<ProdutoDTO> atualizarProduto(@PathVariable Integer id, @RequestBody Produto produtoAtualizado) {
         ProdutoDTO produtoDTO = produtoService.atualizarProduto(id, produtoAtualizado);
         if (produtoDTO != null) {
@@ -110,6 +113,13 @@ public class ProdutoController {
     public ResponseEntity<Void> deletarTipo(@PathVariable Integer id) {
         tipoService.removerTipo(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/tipos")
+    public ResponseEntity<List<TipoDTO>> listarTodosTipos() {
+        List<TipoDTO> tiposDTO = tipoService.listarTodosTipos();
+        return ResponseEntity.ok(tiposDTO);
     }
 
 
