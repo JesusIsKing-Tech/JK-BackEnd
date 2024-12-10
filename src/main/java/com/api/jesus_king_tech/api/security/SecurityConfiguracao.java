@@ -3,8 +3,10 @@ package com.api.jesus_king_tech.api.security;
 import com.api.jesus_king_tech.api.security.jwt.GerenciadorTokenJwt;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.AutenticacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,6 +39,8 @@ public class SecurityConfiguracao {
     private AutenticacaoService autenticacaoService;
 
     @Autowired
+    @Lazy
+    @Qualifier("jwtAuthenticationEntryPointBean")
     private AutenticacaoEntryPoint autenticacaoJwtEntryPoint;
 
     private static final AntPathRequestMatcher[] URLS_PERMITIDAS = {
