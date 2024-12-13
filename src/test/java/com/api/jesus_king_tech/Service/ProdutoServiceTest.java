@@ -39,11 +39,11 @@ class ProdutoServiceTest {
     @DisplayName("Cadastrar Produto deve salvar e retornar DTO corretamente")
     void cadastrarProduto() {
         Produto produto = new Produto();
-        produto.setPeso(10.5);
+        produto.setPeso_litro(10.5);
 
         Produto produtoSalvo = new Produto();
         produtoSalvo.setId(1);
-        produtoSalvo.setPeso(10.5);
+        produtoSalvo.setPeso_litro(10.5);
 
         ProdutoMapper produtoMapperReal = new ProdutoMapper();
         ProdutoDTO produtoEsperado = produtoMapperReal.toProdutoDTO(produtoSalvo);
@@ -64,7 +64,7 @@ class ProdutoServiceTest {
 
         Mockito.when(produtoRepository.findAll()).thenReturn(produtos);
 
-        List<Produto> resultado = produtoService.listarTodos();
+        List<ProdutoDTO> resultado = produtoService.listarTodos();
 
         Assertions.assertNotNull(resultado);
         Assertions.assertEquals(2, resultado.size());
@@ -76,14 +76,14 @@ class ProdutoServiceTest {
         Integer id = 1;
         Produto produtoExistente = new Produto();
         produtoExistente.setId(id);
-        produtoExistente.setPeso(10.5);
+        produtoExistente.setPeso_litro(10.5);
 
         Produto produtoAtualizado = new Produto();
-        produtoAtualizado.setPeso(12.0);
+        produtoAtualizado.setPeso_litro(12.0);
 
         Produto produtoSalvo = new Produto();
         produtoSalvo.setId(id);
-        produtoSalvo.setPeso(12.0);
+        produtoSalvo.setPeso_litro(12.0);
 
         ProdutoMapper produtoMapperReal = new ProdutoMapper();
         ProdutoDTO produtoEsperado = produtoMapperReal.toProdutoDTO(produtoSalvo);
@@ -103,7 +103,7 @@ class ProdutoServiceTest {
     void atualizarProdutoNaoEncontrado() {
         Integer id = 1;
         Produto produtoAtualizado = new Produto();
-        produtoAtualizado.setPeso(12.0);
+        produtoAtualizado.setPeso_litro(12.0);
 
         Mockito.when(produtoRepository.findById(id)).thenReturn(Optional.empty());
 
@@ -146,7 +146,7 @@ class ProdutoServiceTest {
     void listarTodosProdutosVazia() {
         Mockito.when(produtoRepository.findAll()).thenReturn(List.of());
 
-        List<Produto> resultado = produtoService.listarTodos();
+        List<ProdutoDTO> resultado = produtoService.listarTodos();
 
         Assertions.assertNotNull(resultado);
         Assertions.assertTrue(resultado.isEmpty());
@@ -158,7 +158,7 @@ class ProdutoServiceTest {
     void atualizarProdutoIdNaoEncontrado() {
         Integer idInexistente = 999;
         Produto produtoAtualizado = new Produto();
-        produtoAtualizado.setPeso(15.0);
+        produtoAtualizado.setPeso_litro(15.0);
 
         Mockito.when(produtoRepository.findById(idInexistente)).thenReturn(Optional.empty());
 
