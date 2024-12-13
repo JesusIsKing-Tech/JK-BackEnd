@@ -1,20 +1,27 @@
 package com.api.jesus_king_tech.api.controller;
 
+import com.api.jesus_king_tech.domain.cesta_basica.CestaBasica;
+import com.api.jesus_king_tech.domain.cesta_basica.dto.CestaBasicaDTO;
 import com.api.jesus_king_tech.domain.endereco.dto.ListaEstaticaEnderecoResponse;
 import com.api.jesus_king_tech.domain.produto.Produto;
 import com.api.jesus_king_tech.domain.produto.categoria.Categoria;
 import com.api.jesus_king_tech.domain.produto.categoria.dto.CategoriaDTO;
 import com.api.jesus_king_tech.domain.produto.dto.ProdutoDTO;
+import com.api.jesus_king_tech.domain.produto.dto.ProdutoMapper;
+import com.api.jesus_king_tech.domain.produto.dto.ProdutoMultiploDTO;
 import com.api.jesus_king_tech.domain.produto.repository.ProdutoRepository;
 import com.api.jesus_king_tech.domain.produto.tipo.Tipo;
 import com.api.jesus_king_tech.domain.produto.tipo.dto.TipoDTO;
 import com.api.jesus_king_tech.service.CategoriaService;
 import com.api.jesus_king_tech.service.ProdutoService;
 import com.api.jesus_king_tech.service.TipoService;
+import com.azure.core.annotation.Get;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,10 +37,28 @@ public class ProdutoController {
     private final CategoriaService categoriaService;
     private final TipoService tipoService;
 
+    @Autowired
+    private ProdutoMapper produtoMapper;
+
     public ProdutoController(ProdutoService produtoService, CategoriaService categoriaService, TipoService tipoService) {
         this.produtoService = produtoService;
         this.categoriaService = categoriaService;
         this.tipoService = tipoService;
+    }
+
+    @PostMapping("/multiplo")
+    public ResponseEntity<List<ProdutoDTO>> cadastrarProduto2(@RequestBody ProdutoMultiploDTO produtoMultiploDTO) {
+
+
+        List<ProdutoDTO> produtosResponseDTO = new ArrayList<>();
+
+        for (int i = 0; i < produtoMultiploDTO.getQuantidade() ; i++) {
+            Produto produto = produtoMapper.toProdutoEntity(produtoMultiploDTO);
+            ProdutoDTO produtoDTO = produtoService.cadastrarProduto(produto);
+            produtosResponseDTO.add(produtoDTO);
+        }
+
+        return ResponseEntity.status(201).body(produtosResponseDTO);
     }
 
     @PostMapping
@@ -42,10 +67,16 @@ public class ProdutoController {
         return ResponseEntity.status(201).body(produtoDTO);
     }
 
+//    @GetMapping("/cards")
+//    public ResponseEntity<List<Produto>> listarCards () {
+//        List<Produto> produtos = produtoService.listarTodosCards();
+//        return ;
+//    }
+
 
     @GetMapping
-    public ResponseEntity<List<Produto>> listarProdutos() {
-        List<Produto> produtos = produtoService.listarTodos();
+    public ResponseEntity<List<ProdutoDTO>> listarProdutos() {
+        List<ProdutoDTO> produtos = produtoService.listarTodos();
         return ResponseEntity.ok(produtos);
     }
 
@@ -120,6 +151,24 @@ public class ProdutoController {
     public ResponseEntity<List<TipoDTO>> listarTodosTipos() {
         List<TipoDTO> tiposDTO = tipoService.listarTodosTipos();
         return ResponseEntity.ok(tiposDTO);
+    }
+
+    @GetMapping("/tipos/by-categoria/{id}")
+    public ResponseEntity<List<TipoDTO>> listarTiposPorCategoria(@PathVariable Integer id) {
+        List<TipoDTO> tiposDTO = tipoService.listarTiposPorCategoria(id);
+        return ResponseEntity.ok(tiposDTO);
+    }
+
+    @PostMapping("/cesta-basica")
+    public ResponseEntity<List<CestaBasicaDTO>> montarCesta() throws BadRequestException {
+        List<CestaBasicaDTO> cestasBasicas = produtoService.montarCesta();
+        return ResponseEntity.status(201).body(cestasBasicas);
+    }
+
+    @GetMapping("/cesta-basica")
+    public ResponseEntity<List<CestaBasicaDTO>> listarCestasBasicas() {
+        List<CestaBasicaDTO> cestasBasicas = produtoService.listarCestasBasicas();
+        return ResponseEntity.ok(cestasBasicas);
     }
 
 

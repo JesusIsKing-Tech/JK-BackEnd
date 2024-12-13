@@ -1,5 +1,6 @@
 package com.api.jesus_king_tech.domain.produto;
 
+import com.api.jesus_king_tech.domain.cesta_basica.CestaBasica;
 import com.api.jesus_king_tech.domain.produto.categoria.Categoria;
 import com.api.jesus_king_tech.domain.produto.tipo.Tipo;
 import jakarta.persistence.*;
@@ -18,7 +19,7 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Double peso;
+    private Double peso_litro;
 
     @Column(name = "dtEntrada")
     private LocalDate dataEntrada = LocalDate.now();
@@ -30,5 +31,9 @@ public class Produto {
     @ManyToOne
     @JoinColumn(name = "fk_tipo", nullable = false)
     private Tipo tipo;
+
+    @ManyToOne
+    @JoinColumn(name = "cesta_basica_id", nullable = true)
+    private CestaBasica cestaBasica;
 
 }

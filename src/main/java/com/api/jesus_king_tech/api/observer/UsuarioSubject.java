@@ -2,6 +2,7 @@ package com.api.jesus_king_tech.api.observer;
 
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.domain.usuario.dto.UsuarioResponseDto;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class UsuarioSubject {
         observers.remove(observer);
     }
 
+    @Async
     public void notifyObservers(String eventType, Usuario usuario) {
 
         System.out.println(observers);

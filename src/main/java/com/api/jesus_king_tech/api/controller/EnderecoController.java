@@ -81,5 +81,11 @@ public class EnderecoController implements EnderecoControllerOpenApi {
         return ResponseEntity.ok(enderecosOrdenados);
     }
 
+    @PostMapping("/verificar")
+    public ResponseEntity<Integer> verificarEndereco(@RequestBody EnderecoDTO enderecoDTO) throws ClassNotFoundException {
+        Integer enderecoId = enderecoService.verificarEndereco(enderecoDTO);
+        return ResponseEntity.ok(enderecoId);
+    }
+
 }
 

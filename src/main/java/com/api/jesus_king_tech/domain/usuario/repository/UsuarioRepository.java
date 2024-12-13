@@ -1,5 +1,6 @@
 package com.api.jesus_king_tech.domain.usuario.repository;
 
+import com.api.jesus_king_tech.domain.endereco.Endereco;
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Optional<Usuario> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    boolean existsByEndereco(Endereco endereco);
 }

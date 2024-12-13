@@ -2,6 +2,7 @@ package com.api.jesus_king_tech.domain.produto.tipo;
 
 import com.api.jesus_king_tech.domain.produto.categoria.Categoria;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Setter
@@ -17,7 +18,12 @@ public class Tipo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank
     private String nome;
+
+    @ManyToOne
+    private Categoria categoria;
+
 
 
 }

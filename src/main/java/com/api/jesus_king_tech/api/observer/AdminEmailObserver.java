@@ -11,7 +11,8 @@ import java.util.List;
 public class AdminEmailObserver implements Observer {
 
     public static final List<String> ADMIN_EMAIL = Arrays.asList(
-            "kauavidal2004@gmail.com"
+            "kauavidal2004@gmail.com",
+            "monteiro@sptech.school"
     );
 
     @Override

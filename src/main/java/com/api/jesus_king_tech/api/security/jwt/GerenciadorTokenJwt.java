@@ -1,16 +1,22 @@
 package com.api.jesus_king_tech.api.security.jwt;
 
+import com.api.jesus_king_tech.domain.usuario.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -64,6 +70,14 @@ public class GerenciadorTokenJwt {
 
     private SecretKey parseSecret(){
         return Keys.hmacShaKeyFor(this.secret.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public String gerarTokenParaUsuarioExistente(Usuario usuario) {
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                usuario.getEmail(), usuario.getSenha(), authorities);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        return generateToken(authenticationToken);
     }
 
 }

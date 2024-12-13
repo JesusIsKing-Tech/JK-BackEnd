@@ -58,6 +58,7 @@ public class SecurityConfiguracao {
             new AntPathRequestMatcher("/usuarios/recuperar-senha/**"),
             new AntPathRequestMatcher("/usuarios/cadastrar"),
             new AntPathRequestMatcher("/enderecos/buscar/**"),
+            new AntPathRequestMatcher("/produtos/cesta-basica"),
 //            new AntPathRequestMatcher("/usuarios/**")
     };
 
