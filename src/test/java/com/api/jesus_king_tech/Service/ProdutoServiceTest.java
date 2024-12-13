@@ -2,9 +2,13 @@ package com.api.jesus_king_tech.Service;
 
 
 import com.api.jesus_king_tech.domain.produto.Produto;
+import com.api.jesus_king_tech.domain.produto.categoria.Categoria;
+import com.api.jesus_king_tech.domain.produto.categoria.repository.CategoriaRepository;
 import com.api.jesus_king_tech.domain.produto.dto.ProdutoDTO;
 import com.api.jesus_king_tech.domain.produto.dto.ProdutoMapper;
 import com.api.jesus_king_tech.domain.produto.repository.ProdutoRepository;
+import com.api.jesus_king_tech.domain.produto.tipo.Tipo;
+import com.api.jesus_king_tech.domain.produto.tipo.repository.TipoRepository;
 import com.api.jesus_king_tech.exception.ExceptionHttp;
 import com.api.jesus_king_tech.service.ProdutoService;
 import org.junit.jupiter.api.Assertions;
@@ -33,21 +37,43 @@ class ProdutoServiceTest {
     private ProdutoRepository produtoRepository;
 
     @Mock
+    private CategoriaRepository categoriaRepository;
+
+    @Mock
+    private TipoRepository tipoRepository;
+
+    @Mock
     private ProdutoMapper produtoMapper;
 
     @Test
     @DisplayName("Cadastrar Produto deve salvar e retornar DTO corretamente")
     void cadastrarProduto() {
+
+        Categoria categoria = new Categoria();
+        categoria.setId(1);
+        categoria.setNome("arroz");
+
+        Tipo tipo = new Tipo();
+        tipo.setId(1);
+        tipo.setNome("Integral");
+
+
         Produto produto = new Produto();
         produto.setPeso_litro(10.5);
+        produto.setCategoria(categoria);
+        produto.setTipo(tipo);
 
         Produto produtoSalvo = new Produto();
         produtoSalvo.setId(1);
         produtoSalvo.setPeso_litro(10.5);
+        produtoSalvo.setCategoria(categoria);
+        produtoSalvo.setTipo(tipo);
 
         ProdutoMapper produtoMapperReal = new ProdutoMapper();
         ProdutoDTO produtoEsperado = produtoMapperReal.toProdutoDTO(produtoSalvo);
 
+        Mockito.when(categoriaRepository.findById(1)).thenReturn(Optional.of(categoria));
+        Mockito.when(tipoRepository.findById(1)).thenReturn(Optional.of(tipo));
         Mockito.when(produtoRepository.save(produto)).thenReturn(produtoSalvo);
 
         ProdutoDTO resultado = produtoService.cadastrarProduto(produto);

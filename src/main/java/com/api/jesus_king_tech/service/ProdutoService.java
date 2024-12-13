@@ -38,18 +38,29 @@ public class ProdutoService {
 
     private final ProdutoMapper produtoMapper;
 
-    public ProdutoService(ProdutoRepository produtoRepository) {
+    public ProdutoService(ProdutoRepository produtoRepository, CategoriaRepository categoriaRepository, TipoRepository tipoRepository) {
+        this.tipoRepository = tipoRepository;
         this.produtoRepository = produtoRepository;
         this.produtoMapper = new ProdutoMapper();
+        this.categoriaRepository = categoriaRepository;
     }
 
 
     public ProdutoDTO cadastrarProduto(Produto produto) {
 
+        if (produto.getCategoria() == null) {
+            throw new IllegalArgumentException("Categoria não pode ser nula");
+        }
+
         // Buscar a categoria pelo ID
         Categoria categoria = categoriaRepository.findById(produto.getCategoria().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
+
         produto.setCategoria(categoria);
+
+        if (produto.getTipo() == null) {
+            throw new IllegalArgumentException("Tipo não pode ser nulo");
+        }
 
         // Buscar o tipo pelo ID
         Tipo tipo = tipoRepository.findById(produto.getTipo().getId())
