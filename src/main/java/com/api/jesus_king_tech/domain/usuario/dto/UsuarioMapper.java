@@ -33,6 +33,8 @@ public class UsuarioMapper {
                 .data_nascimento(entity.getData_nascimento())
                 .genero(entity.getGenero())
                 .endereco(entity.getEndereco())
+                .receber_doacoes(entity.isReceber_doacoes())
+                .foto_perfil_url(entity.getFoto_perfil_url())
                 .build();
 
     }
@@ -64,4 +66,16 @@ public class UsuarioMapper {
     }
 
 
+    public static Usuario usuarioAtualizarSimplesToUsuarioEntity(UsuarioAtualizarSimplesDto usuario) {
+        if (usuario == null) {
+            return null;
+        }
+
+        return Usuario.builder()
+                .nome(usuario.getNome())
+                .email(usuario.getEmail())
+                .telefone(usuario.getTelefone())
+                .receber_doacoes(usuario.isReceber_doacoes())
+                .build();
+    }
 }

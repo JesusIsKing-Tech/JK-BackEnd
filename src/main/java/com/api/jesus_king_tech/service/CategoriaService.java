@@ -5,6 +5,7 @@ import com.api.jesus_king_tech.domain.produto.categoria.Categoria;
 import com.api.jesus_king_tech.domain.produto.categoria.dto.CategoriaDTO;
 import com.api.jesus_king_tech.domain.produto.categoria.repository.CategoriaRepository;
 import com.api.jesus_king_tech.domain.produto.dto.ProdutoMapper;
+import com.api.jesus_king_tech.domain.produto.tipo.Tipo;
 import com.api.jesus_king_tech.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,13 @@ public class CategoriaService {
     private final ProdutoMapper produtoMapper = new ProdutoMapper();
 
     public CategoriaDTO cadastrarCategoria(Categoria categoria) {
-        return produtoMapper.toCategoriaDTO(categoriaRepository.save(categoria));
+        for (Tipo tipo : categoria.getTipo()){
+            tipo.setCategoria(categoria);
+        }
+
+        Categoria savedCategoria = categoriaRepository.save(categoria);
+
+        return produtoMapper.toCategoriaDTO(savedCategoria);
     }
 
     public CategoriaDTO atualizarCategoria(Integer id, Categoria categoriaAtualizada) {

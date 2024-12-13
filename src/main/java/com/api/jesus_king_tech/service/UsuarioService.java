@@ -1,5 +1,7 @@
 package com.api.jesus_king_tech.service;
 
+import com.api.jesus_king_tech.api.imagens.AzureStorageService;
+import com.api.jesus_king_tech.api.imagens.ImgPerfil;
 import com.api.jesus_king_tech.api.observer.AdminEmailObserver;
 import com.api.jesus_king_tech.api.observer.UsuarioSubject;
 import com.api.jesus_king_tech.api.security.jwt.GerenciadorTokenJwt;
@@ -8,23 +10,27 @@ import com.api.jesus_king_tech.domain.endereco.repository.EnderecoRepository;
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioLoginDto;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioTokenDto;
+import com.api.jesus_king_tech.domain.usuario.dto.UsuarioAtualizarSimplesDto;
 import com.api.jesus_king_tech.domain.usuario.dto.UsuarioMapper;
 import com.api.jesus_king_tech.domain.usuario.dto.UsuarioMudarSenhaDto;
 import com.api.jesus_king_tech.domain.usuario.dto.UsuarioValidarCodigoDto;
 import com.api.jesus_king_tech.domain.usuario.repository.UsuarioRepository;
 import com.api.jesus_king_tech.exception.ExceptionHttp;
 import com.api.jesus_king_tech.service.JavaMailRecuperacaoSenha.JavaMail;
+import com.api.jesus_king_tech.util.EmailUtil;
 import com.api.jesus_king_tech.util.PasswordUtil;
 import com.api.jesus_king_tech.util.ValidacaoUsuarioStrategy;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.BufferedWriter;
@@ -32,11 +38,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 //@RequiredArgsConstructor
@@ -50,10 +54,24 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final EnderecoService enderecoService;
     private final EnderecoRepository enderecoRepository;
-
     private final UsuarioSubject usuarioSubject;
+    private final EmailUtil emailUtil;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, List<ValidacaoUsuarioStrategy> validacoes, GerenciadorTokenJwt gerenciadorTokenJwt, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, EnderecoService enderecoService, EnderecoRepository enderecoRepository, UsuarioSubject usuarioSubject, AdminEmailObserver adminEmailObserver) {
+    private final AzureStorageService azureStorageService;
+
+    public UsuarioService(
+            UsuarioRepository usuarioRepository,
+            List<ValidacaoUsuarioStrategy> validacoes,
+            GerenciadorTokenJwt gerenciadorTokenJwt,
+            AuthenticationManager authenticationManager,
+            PasswordEncoder passwordEncoder,
+            EnderecoService enderecoService,
+            EnderecoRepository enderecoRepository,
+            UsuarioSubject usuarioSubject,
+            AdminEmailObserver adminEmailObserver,
+            EmailUtil emailUtil,
+            AzureStorageService azureStorageService
+    ) {
         this.usuarioRepository = usuarioRepository;
         this.validacoes = validacoes;
         this.gerenciadorTokenJwt = gerenciadorTokenJwt;
@@ -62,7 +80,9 @@ public class UsuarioService {
         this.enderecoService = enderecoService;
         this.enderecoRepository = enderecoRepository;
         this.usuarioSubject = usuarioSubject;
+        this.emailUtil = emailUtil;
         this.usuarioSubject.addObserver(adminEmailObserver);
+        this.azureStorageService = azureStorageService;
     }
 
 
@@ -200,6 +220,50 @@ public class UsuarioService {
 
     }
 
+    public String atualizarSimplesUsuarioPorId(Integer id, UsuarioAtualizarSimplesDto usuarioAtualizar){
+
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+
+        if (usuario.isEmpty()){
+            throw new ExceptionHttp("Nenhum usuario com o Id: " + id + " Encontrado", HttpStatus.NOT_FOUND);
+        }
+
+        Usuario userFinal = usuario.get();
+
+        Optional<Usuario> usuarioDoEmailOpt = usuarioRepository.findByEmail(usuarioAtualizar.getEmail());
+
+
+        if (usuarioDoEmailOpt.isPresent()) {
+            Usuario usuarioDoEmail = usuarioDoEmailOpt.get();
+            if (!usuarioDoEmail.getId().equals(id)) {
+                throw new ExceptionHttp("Este email já está cadastrado", HttpStatus.CONFLICT);
+            }
+        }
+
+        userFinal.setNome(usuarioAtualizar.getNome());
+        userFinal.setEmail(usuarioAtualizar.getEmail());
+        userFinal.setTelefone(usuarioAtualizar.getTelefone());
+        userFinal.setReceber_doacoes(usuarioAtualizar.isReceber_doacoes());
+
+        if (!emailUtil.validar(userFinal)) {
+            throw new ExceptionHttp(emailUtil.respostaErro(), HttpStatus.BAD_REQUEST);
+        }
+
+        Usuario usuarioAtualizado = usuarioRepository.save(userFinal);
+        System.out.println("Usuario atualizado: " + usuarioAtualizado.getSenha() + " " + usuarioAtualizado.getEmail());
+
+        String senhaSemHash = "{bcrypt}" + usuarioAtualizado.getSenha();
+
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+
+        // Autenticar o usuário e gerar o token JWT
+
+        final String token = gerenciadorTokenJwt.gerarTokenParaUsuarioExistente(usuarioAtualizado);
+
+        return token;
+
+    }
+
     public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto){
 
         final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
@@ -316,6 +380,40 @@ public class UsuarioService {
     public Usuario buscarUsuarioPorId(Integer id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+    }
+
+    public Usuario cadastrarFotoPerfil(Integer id, MultipartFile fotoPerfil) {
+        Usuario usuario = buscarUsuarioPorId(id);
+
+        try {
+            ImgPerfil blob = azureStorageService.uploadFile(fotoPerfil);
+            usuario.setFoto_perfil_url(blob.getUrl());
+            usuario.setFoto_perfil_blob_name(blob.getBlobName());
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao salvar a foto de perfil");
+        }
+
+       return usuarioRepository.save(usuario);
+    }
+
+    public void deletarFotoPerfil(Integer id) {
+        Usuario usuario = buscarUsuarioPorId(id);
+
+        if (usuario.getFoto_perfil_url() == null && usuario.getFoto_perfil_blob_name() == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Foto de perfil não encontrada");
+        }
+
+        try {
+        azureStorageService.deleteFile(usuario.getFoto_perfil_blob_name());
+        usuario.setFoto_perfil_url(null);
+        usuario.setFoto_perfil_blob_name(null);
+
+        usuarioRepository.save(usuario);
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
 

@@ -16,6 +16,7 @@ public class UsuarioResponseDto {
     private LocalDate data_nascimento;
     private String genero;
     private boolean receber_doacoes;
+    private String foto_perfil_url;
 
     private Endereco endereco;
 }

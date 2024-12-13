@@ -8,6 +8,7 @@ import com.api.jesus_king_tech.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,4 +47,11 @@ public class TipoService {
                 .collect(Collectors.toList());
     }
 
+    public List<TipoDTO> listarTiposPorCategoria(Integer id) {
+        Collection<Tipo> tipos = tipoRepository.findByCategoriaId(id);
+
+        return tipos.stream()
+                .map(produtoMapper::toTipoDTO)
+                .collect(Collectors.toList());
+    }
 }

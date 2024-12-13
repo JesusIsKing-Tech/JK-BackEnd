@@ -2,13 +2,13 @@ package com.api.jesus_king_tech.domain.endereco;
 
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.api.jesus_king_tech.domain.cesta_basica.CestaBasica;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,6 +43,9 @@ public class Endereco {
     @NotBlank(message = "O campo UF é obrigatório.")
     @Pattern(regexp = "[A-Z]{2}", message = "UF deve ser um código de 2 letras.")
     private String uf;
+
+    @OneToMany(mappedBy = "endereco")
+    private List<CestaBasica> cestasBasicas;
 
 
 

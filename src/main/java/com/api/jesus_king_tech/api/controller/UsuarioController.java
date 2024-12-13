@@ -8,13 +8,16 @@ import com.api.jesus_king_tech.domain.usuario.dto.*;
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.service.UsuarioService;
 import com.api.jesus_king_tech.swagger.controllers_openApi.UsuariosControllerOpenApi;
+import com.api.jesus_king_tech.util.EmailUtil;
 import com.api.jesus_king_tech.util.ValidacaoUsuarioStrategy;
+import com.azure.core.annotation.Put;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,6 +53,23 @@ import java.util.stream.Collectors;
         UsuarioResponseDto usuarioResponseDto = UsuarioMapper.usuarioEntityToDto(usuarioSalvo);
 
         return ResponseEntity.status(201).body(usuarioResponseDto);
+    }
+
+    @PostMapping("/cadastrar/foto-perfil/{id}")
+    public ResponseEntity<UsuarioResponseDto> cadastrarFotoPerfil(@PathVariable Integer id, @RequestParam("file") MultipartFile fotoPerfil) {
+        Usuario usuario = usuarioService.cadastrarFotoPerfil(id, fotoPerfil);
+
+        UsuarioResponseDto usuarioResponseDto = UsuarioMapper.usuarioEntityToDto(usuario);
+
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioResponseDto);
+    }
+
+    @DeleteMapping("/deletar-foto-perfil/{id}")
+    public ResponseEntity<UsuarioResponseDto> deletarFotoPerfil(@PathVariable Integer id) {
+       usuarioService.deletarFotoPerfil(id);
+
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping
@@ -122,6 +142,17 @@ import java.util.stream.Collectors;
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioResponseDto);
+    }
+
+    @PutMapping("/simples/{id}")
+    public ResponseEntity<String> atualizarUsuarioSimples(@PathVariable Integer id, @RequestBody UsuarioAtualizarSimplesDto usuario) {
+
+
+        String usuarioTokenDto = usuarioService.atualizarSimplesUsuarioPorId(id, usuario);
+
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(usuarioTokenDto);
     }
 
     @PostMapping("/login")

@@ -4,6 +4,7 @@ import com.api.jesus_king_tech.domain.endereco.dto.*;
 import com.api.jesus_king_tech.domain.endereco.Endereco;
 import com.api.jesus_king_tech.domain.endereco.repository.EnderecoRepository;
 import com.api.jesus_king_tech.domain.endereco.repository.ViaCepClient;
+import com.api.jesus_king_tech.domain.usuario.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,9 @@ public class EnderecoService {
 
     @Autowired
     private ViaCepClient viaCepClient;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
 
 
@@ -89,6 +93,17 @@ public class EnderecoService {
 
     }
 
+    public Integer verificarEndereco(EnderecoDTO enderecoDTO) throws ClassNotFoundException {
+        Optional<Endereco> enderecoOpt = enderecoRepository.findByCepAndLogradouroAndBairroAndLocalidadeAndUfAndNumeroAndComplemento(
+                enderecoDTO.getCep(), enderecoDTO.getLogradouro(), enderecoDTO.getBairro(),enderecoDTO.getLocalidade(),enderecoDTO.getUf(),enderecoDTO.getNumero(), enderecoDTO.getComplemento());
+        if (enderecoOpt.isPresent()) {
+            Endereco endereco = enderecoOpt.get();
+            if (usuarioRepository.existsByEndereco(endereco)){
+                return endereco.getId();
+            }
+        }
+        throw new ClassNotFoundException("Endereço não encontrado");
+    }
 }
 
 
