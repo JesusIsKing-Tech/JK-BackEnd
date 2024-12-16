@@ -231,6 +231,19 @@ import java.util.stream.Collectors;
         }
     }
 
+    @GetMapping("/endereco/{id}")
+    public ResponseEntity<List<UsuarioResponseDto>> usuariosPorEndereco(@PathVariable Integer id) {
+
+        List<Usuario> usuarios = usuarioService.usuariosPorEndereco(id);
+
+        System.out.println(usuarios);
+
+        List<UsuarioResponseDto> dtos = usuarios.stream()
+                .map(UsuarioMapper::usuarioEntityToDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
 
 
 }

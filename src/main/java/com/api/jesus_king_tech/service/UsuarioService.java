@@ -415,6 +415,13 @@ public class UsuarioService {
         }
 
     }
+
+    public List<Usuario> usuariosPorEndereco(int idEndereco) {
+        Endereco endereco = enderecoRepository.findById(idEndereco)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereço não encontrado"));
+
+        return usuarioRepository.findAllByEndereco(endereco);
+    }
 }
 
 

@@ -204,4 +204,45 @@ public class ProdutoService {
                 .map(produtoMapper::toCestaBasicaDTO)
                 .collect(Collectors.toList());
     }
+
+    public void doarCesta() {
+
+        // Definindo os requisitos mínimos para montar uma cesta básica
+        Map<String, Double> requisitos = new HashMap<>();
+        requisitos.put("Arroz", 7.0);
+        requisitos.put("Feijão", 5.0);
+        requisitos.put("Macarrão", 2.0);
+        requisitos.put("Farinha", 2.0);
+        requisitos.put("Óleo", 2.0);
+        requisitos.put("Açúcar", 2.0);
+        requisitos.put("Sal", 2.0);
+        requisitos.put("Café", 1.0);
+        requisitos.put("Leite em pó", 2.0);
+
+        if (!temProdutosSuficientes(requisitos)) {
+            throw new ResourceNotFoundException("Não há produtos suficientes para montar uma cesta básica");
+        }
+
+        // Adicionar produtos à cesta básica e deletar do estoque
+        for (Map.Entry<String, Double> requisito : requisitos.entrySet()) {
+            String nomeProduto = requisito.getKey();
+            Double quantidadeNecessaria = requisito.getValue();
+
+            List<Produto> produtos = produtoRepository.findAllByCategoriaNome(nomeProduto)
+                    .stream()
+                    .filter(produto -> produto.getCestaBasica() == null)
+                    .toList();
+
+            double quantidadeTotal = 0.0;
+
+            for (Produto produto : produtos) {
+                if (quantidadeTotal >= quantidadeNecessaria) {
+                    break;
+                }
+                double quantidadeAdicionar = Math.min(produto.getPeso_litro(), quantidadeNecessaria - quantidadeTotal);
+                quantidadeTotal += quantidadeAdicionar;
+                produtoRepository.delete(produto);
+            }
+        }
+    }
 }

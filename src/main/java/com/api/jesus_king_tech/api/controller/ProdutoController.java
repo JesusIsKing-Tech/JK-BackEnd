@@ -165,6 +165,12 @@ public class ProdutoController {
         return ResponseEntity.status(201).body(cestasBasicas);
     }
 
+    @DeleteMapping("/doar/cesta-basica")
+    public ResponseEntity<Void> doarCesta() throws BadRequestException {
+        produtoService.doarCesta();
+        return ResponseEntity.status(204).build();
+    }
+
     @GetMapping("/cesta-basica")
     public ResponseEntity<List<CestaBasicaDTO>> listarCestasBasicas() {
         List<CestaBasicaDTO> cestasBasicas = produtoService.listarCestasBasicas();
