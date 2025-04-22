@@ -1,6 +1,5 @@
 package com.api.jesus_king_tech.api.controller;
 
-import com.api.jesus_king_tech.api.observer.AdminEmailObserver;
 import com.api.jesus_king_tech.api.observer.UsuarioSubject;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioLoginDto;
 import com.api.jesus_king_tech.domain.usuario.autenticacao.dto.UsuarioTokenDto;
@@ -8,19 +7,16 @@ import com.api.jesus_king_tech.domain.usuario.dto.*;
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.service.UsuarioService;
 import com.api.jesus_king_tech.swagger.controllers_openApi.UsuariosControllerOpenApi;
-import com.api.jesus_king_tech.util.EmailUtil;
 import com.api.jesus_king_tech.util.ValidacaoUsuarioStrategy;
-import com.azure.core.annotation.Put;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +37,8 @@ import java.util.stream.Collectors;
     @Autowired
     private UsuarioSubject usuarioSubject;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
 
     @PostMapping("/cadastrar")
@@ -244,6 +242,19 @@ import java.util.stream.Collectors;
         return ResponseEntity.ok(dtos);
     }
 
+    @GetMapping("/familia")
+    public ResponseEntity<List<UsuarioResponseDto>> usuariosFamilia(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");
 
+        Integer idUsuario = usuarioService.getUserIdByToken(token);
+
+        List<Usuario> usuarios = usuarioService.familiaPorEndereco(idUsuario);
+
+        List<UsuarioResponseDto> dtos = usuarios.stream()
+                .map(UsuarioMapper::usuarioEntityToDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
+    }
 
 }
