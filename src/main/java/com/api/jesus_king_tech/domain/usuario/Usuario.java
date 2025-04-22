@@ -34,8 +34,14 @@ public class Usuario {
     private boolean receber_doacoes;
     private String codigo_recuperar_senha;
     private LocalDateTime validade_codigo_senha;
-    private String foto_perfil_url;
-    private String foto_perfil_blob_name;
+    @Lob
+    @Column(name = "foto_perfil", columnDefinition = "LONGBLOB")
+    private byte[] fotoPerfil;
+
+    @Column(name = "foto_perfil_mime_type")
+    private String fotoPerfilMimeType;
+
+    @Transient  String fotoPerfilUrl;
 
     @ManyToOne
     private Endereco endereco;
