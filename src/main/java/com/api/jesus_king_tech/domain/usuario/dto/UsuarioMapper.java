@@ -34,7 +34,7 @@ public class UsuarioMapper {
                 .genero(entity.getGenero())
                 .endereco(entity.getEndereco())
                 .receber_doacoes(entity.isReceber_doacoes())
-                .foto_perfil_url(entity.getFoto_perfil_url())
+                .foto_perfil_url(entity.getFotoPerfilUrl())
                 .build();
 
     }

@@ -20,6 +20,7 @@ import com.api.jesus_king_tech.service.JavaMailRecuperacaoSenha.JavaMail;
 import com.api.jesus_king_tech.util.EmailUtil;
 import com.api.jesus_king_tech.util.PasswordUtil;
 import com.api.jesus_king_tech.util.ValidacaoUsuarioStrategy;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -382,39 +383,37 @@ public class UsuarioService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
     }
 
+    @Transactional
     public Usuario cadastrarFotoPerfil(Integer id, MultipartFile fotoPerfil) {
         Usuario usuario = buscarUsuarioPorId(id);
 
         try {
-            ImgPerfil blob = azureStorageService.uploadFile(fotoPerfil);
-            usuario.setFoto_perfil_url(blob.getUrl());
-            usuario.setFoto_perfil_blob_name(blob.getBlobName());
+            usuario.setFotoPerfil(fotoPerfil.getBytes());
+            String contentType = fotoPerfil.getContentType();
+            System.out.println("Content Type recebido: " + contentType);
+            usuario.setFotoPerfilMimeType(contentType); // Use o tipo MIME real do arquivo
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao salvar a foto de perfil");
         }
 
-       return usuarioRepository.save(usuario);
+        return usuarioRepository.save(usuario);
     }
 
+    @Transactional
     public void deletarFotoPerfil(Integer id) {
         Usuario usuario = buscarUsuarioPorId(id);
 
-        if (usuario.getFoto_perfil_url() == null && usuario.getFoto_perfil_blob_name() == null) {
+        if (usuario.getFotoPerfil() == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Foto de perfil não encontrada");
         }
 
-        try {
-        azureStorageService.deleteFile(usuario.getFoto_perfil_blob_name());
-        usuario.setFoto_perfil_url(null);
-        usuario.setFoto_perfil_blob_name(null);
+        usuario.setFotoPerfil(null);
+        usuario.setFotoPerfilMimeType(null);
 
         usuarioRepository.save(usuario);
-
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
-
     }
+
+
 
     public List<Usuario> usuariosPorEndereco(int idEndereco) {
         Endereco endereco = enderecoRepository.findById(idEndereco)
@@ -422,6 +421,6 @@ public class UsuarioService {
 
         return usuarioRepository.findAllByEndereco(endereco);
     }
-}
 
 
+    }
