@@ -267,22 +267,27 @@ public class UsuarioService {
 
     public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto){
 
-        final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
-                usuarioLoginDto.getEmail(), usuarioLoginDto.getSenha());
+        try {
 
-        final Authentication authentication = authenticationManager.authenticate(credentials);
+            final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
+                    usuarioLoginDto.getEmail(), usuarioLoginDto.getSenha());
 
-        Usuario usuarioAutenticado =
-                usuarioRepository.findByEmail(usuarioLoginDto.getEmail())
-                        .orElseThrow(
-                                () -> new ResponseStatusException(404, "Email do usuário não cadastrado", null)
-                        );
+            final Authentication authentication = authenticationManager.authenticate(credentials);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            Usuario usuarioAutenticado =
+                    usuarioRepository.findByEmail(usuarioLoginDto.getEmail())
+                            .orElseThrow(
+                                    () -> new ResponseStatusException(404, "Email do usuário não cadastrado", null)
+                            );
 
-        final String token = gerenciadorTokenJwt.generateToken(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return UsuarioMapper.of(usuarioAutenticado, token);
+            final String token = gerenciadorTokenJwt.generateToken(authentication);
+
+            return UsuarioMapper.of(usuarioAutenticado, token);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email ou senha inválidos");
+        }
 
     }
 
@@ -421,6 +426,36 @@ public class UsuarioService {
 
         return usuarioRepository.findAllByEndereco(endereco);
     }
+
+
+    public List<Usuario> familiaPorEndereco(int idUsuario) {
+
+        Usuario usuario = buscarUsuarioPorId(idUsuario);
+
+        Integer idEndereco = usuario.getEndereco().getId();
+
+        Endereco endereco = enderecoRepository.findById(idEndereco)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereço não encontrado"));
+
+        return usuarioRepository.findAllByEndereco(endereco);
+    }
+
+    public Integer getUserIdByToken(String token) {
+        String email = gerenciadorTokenJwt.getUsernameFromToken(token);
+
+        if (email == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token inválido");
+        }
+
+        System.out.println("Email do token: " + email);
+
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+
+        return usuario.getId();
+    }
+
+
 
 
     }
