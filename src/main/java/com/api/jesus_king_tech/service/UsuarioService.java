@@ -1,7 +1,5 @@
 package com.api.jesus_king_tech.service;
 
-import com.api.jesus_king_tech.api.imagens.AzureStorageService;
-import com.api.jesus_king_tech.api.imagens.ImgPerfil;
 import com.api.jesus_king_tech.api.observer.AdminEmailObserver;
 import com.api.jesus_king_tech.api.observer.UsuarioSubject;
 import com.api.jesus_king_tech.api.security.jwt.GerenciadorTokenJwt;
@@ -28,7 +26,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,8 +55,6 @@ public class UsuarioService {
     private final UsuarioSubject usuarioSubject;
     private final EmailUtil emailUtil;
 
-    private final AzureStorageService azureStorageService;
-
     public UsuarioService(
             UsuarioRepository usuarioRepository,
             List<ValidacaoUsuarioStrategy> validacoes,
@@ -70,8 +65,7 @@ public class UsuarioService {
             EnderecoRepository enderecoRepository,
             UsuarioSubject usuarioSubject,
             AdminEmailObserver adminEmailObserver,
-            EmailUtil emailUtil,
-            AzureStorageService azureStorageService
+            EmailUtil emailUtil
     ) {
         this.usuarioRepository = usuarioRepository;
         this.validacoes = validacoes;
@@ -83,7 +77,6 @@ public class UsuarioService {
         this.usuarioSubject = usuarioSubject;
         this.emailUtil = emailUtil;
         this.usuarioSubject.addObserver(adminEmailObserver);
-        this.azureStorageService = azureStorageService;
     }
 
 
