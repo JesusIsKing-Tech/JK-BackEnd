@@ -27,6 +27,14 @@ public class Postagem {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date data;
 
-    private String url;
-    private String blobName;
+    private String descricao;
+
+    private Double valor;
+
+    @Lob
+    @Column(name = "imagem", columnDefinition = "LONGBLOB")
+    private byte[] imagem;
+
+    @Column(name = "imagem_mime_type")
+    private String imagemMimeType;
 }
