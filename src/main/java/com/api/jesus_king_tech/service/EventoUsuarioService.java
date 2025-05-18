@@ -9,6 +9,8 @@ import com.api.jesus_king_tech.domain.usuario.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EventoUsuarioService {
 
@@ -82,4 +84,25 @@ public class EventoUsuarioService {
         return eventoUsuarioRepository.countByPostagemIdAndConfirmouPresencaTrue(postagemId);
     }
 
+    // 6. Listar curtidas que um usuário fez
+    public List<EventoUsuario> curtidasPorUsuarios(Integer userId) {
+
+        // Verifica se o usuário existe
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        return  eventoUsuarioRepository.findAllByUsuarioAndCurtiuIsTrue(usuario);
+
+    }
+
+    // 7. Listar eventos que um usuário confirmou presença
+    public List<EventoUsuario> eventosConfirmadosPorUsuarios(Integer userId) {
+
+        // Verifica se o usuário existe
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        return  eventoUsuarioRepository.findAllByUsuarioAndConfirmouPresencaIsTrue(usuario);
+
+    }
 }

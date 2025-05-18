@@ -1,8 +1,10 @@
 package com.api.jesus_king_tech.domain.eventos_usuario.repository;
 
 import com.api.jesus_king_tech.domain.eventos_usuario.EventoUsuario;
+import com.api.jesus_king_tech.domain.usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface EventoUsuarioRepository extends JpaRepository<EventoUsuario, Integer> {
@@ -12,4 +14,9 @@ public interface EventoUsuarioRepository extends JpaRepository<EventoUsuario, In
     Optional<EventoUsuario> findByUsuarioIdAndPostagemId(Integer usuarioId, Integer postagemId);
 
     long countByPostagemIdAndConfirmouPresencaTrue(Integer postagemId);
+
+    List<EventoUsuario> findAllByUsuarioAndCurtiuIsTrue(Usuario usuarioId);
+
+    List<EventoUsuario> findAllByUsuarioAndConfirmouPresencaIsTrue(Usuario usuarioId);
+
 }
