@@ -9,9 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class PostagemService {
+public class  PostagemService {
 
     @Autowired
     private PostagemRepository postagemRepository;
@@ -37,5 +38,9 @@ public class PostagemService {
         LocalDate nextWeek = today.plusDays(7);
 
         return postagemRepository.findByDataBetween(today, nextWeek);
+    }
+
+    public Optional<Postagem> buscarPorId(Integer id) {
+        return postagemRepository.findById(id);
     }
 }

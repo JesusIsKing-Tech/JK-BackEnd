@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/postagem")
@@ -61,6 +62,19 @@ public class PostagemController {
     public ResponseEntity<List<Postagem>> postagemSemana(){
         List<Postagem> postagemSemana = postagemService.postagemSemana();
         return ResponseEntity.ok(postagemSemana);
+    }
+
+    @GetMapping("/foto-evento/{id}")
+    public ResponseEntity<byte[]> getImagem(@PathVariable Integer id) {
+        System.out.println("ID recebido: " + id);
+        Postagem postagem = postagemService.buscarPorId(id).get();
+
+        if (postagem.getImagem() != null) {
+            return ResponseEntity.status(200).header("Content-Type", postagem.getImagemMimeType())
+                    .body(postagem.getImagem());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }
