@@ -96,13 +96,16 @@ public class EventoUsuarioService {
     }
 
     // 7. Listar eventos que um usuário confirmou presença
-    public List<EventoUsuario> eventosConfirmadosPorUsuarios(Integer userId) {
+    public List<Postagem> eventosConfirmadosPorUsuarios(Integer userId) {
 
         // Verifica se o usuário existe
         Usuario usuario = usuarioRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        return  eventoUsuarioRepository.findAllByUsuarioAndConfirmouPresencaIsTrue(usuario);
+        return  eventoUsuarioRepository.findAllByUsuarioAndConfirmouPresencaIsTrue(usuario)
+                .stream()
+                .map(EventoUsuario::getPostagem)
+                .toList();
 
     }
 }
