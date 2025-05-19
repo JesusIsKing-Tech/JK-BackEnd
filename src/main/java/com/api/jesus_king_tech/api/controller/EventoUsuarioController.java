@@ -46,7 +46,7 @@ public class EventoUsuarioController {
     }
 
     @GetMapping("/curtidas-usuario/{userId}")
-    public List<EventoUsuario> curtidasPorUsuarios(@RequestParam Integer userId) {
+    public List<Postagem> curtidasPorUsuarios(@RequestParam Integer userId) {
         return eventoUsuarioService.curtidasPorUsuarios(userId);
     }
 

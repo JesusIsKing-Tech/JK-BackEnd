@@ -85,13 +85,16 @@ public class EventoUsuarioService {
     }
 
     // 6. Listar curtidas que um usuário fez
-    public List<EventoUsuario> curtidasPorUsuarios(Integer userId) {
+    public List<Postagem> curtidasPorUsuarios(Integer userId) {
 
         // Verifica se o usuário existe
         Usuario usuario = usuarioRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        return  eventoUsuarioRepository.findAllByUsuarioAndCurtiuIsTrue(usuario);
+        return  eventoUsuarioRepository.findAllByUsuarioAndCurtiuIsTrue(usuario)
+                .stream()
+                .map(EventoUsuario::getPostagem)
+                .toList();
 
     }
 
