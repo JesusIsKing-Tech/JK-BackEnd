@@ -12,4 +12,6 @@ public interface ChamadoEnderecoRepository extends JpaRepository<ChamadoEndereco
     Optional<ChamadoEndereco> findByUsuarioAndStatus(Usuario usuario, ChamadoEndereco.StatusChamado statusChamado);
 
     List<ChamadoEndereco> findAllByStatus(ChamadoEndereco.StatusChamado statusChamado);
+
+    Optional<ChamadoEndereco> findByIdAndStatus(Integer chamadoId, ChamadoEndereco.StatusChamado statusChamado);
 }

@@ -146,12 +146,11 @@ public class EnderecoService {
     }
 
 
-    public void aprovarChamado(Integer userId) {
-        Usuario usuario = usuarioRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado com o ID: " + userId));
+    public void aprovarChamado(Integer chamadoId) {
+        ChamadoEndereco chamado = chamadoEnderecoRepository.findByIdAndStatus(chamadoId, ChamadoEndereco.StatusChamado.ABERTO)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum chamado aberto encontrado para o com ID: " + chamadoId));
 
-        ChamadoEndereco chamado = chamadoEnderecoRepository.findByUsuarioAndStatus(usuario, ChamadoEndereco.StatusChamado.ABERTO)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum chamado aberto encontrado para o usuário com ID: " + userId));
+        Usuario usuario = chamado.getUsuario();
 
        Endereco enderecoNovo = enderecoRepository.findByCepAndLogradouroAndBairroAndLocalidadeAndUfAndNumeroAndComplemento(
                 chamado.getCep(),
@@ -185,12 +184,9 @@ public class EnderecoService {
        chamadoEnderecoRepository.save(chamado);
     }
 
-    public void rejeitarChamado(Integer userId) {
-        Usuario usuario = usuarioRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado com o ID: " + userId));
-
-        ChamadoEndereco chamado = chamadoEnderecoRepository.findByUsuarioAndStatus(usuario, ChamadoEndereco.StatusChamado.ABERTO)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum chamado aberto encontrado para o usuário com ID: " + userId));
+    public void rejeitarChamado(Integer chamadoId) {
+        ChamadoEndereco chamado = chamadoEnderecoRepository.findByIdAndStatus(chamadoId, ChamadoEndereco.StatusChamado.ABERTO)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum chamado aberto encontrado para o com ID: " + chamadoId));
 
         chamado.setStatus(ChamadoEndereco.StatusChamado.REJEITADO);
         chamado.setUpdated_at(java.time.LocalDateTime.now());

@@ -95,15 +95,15 @@ public class EnderecoController implements EnderecoControllerOpenApi {
         return ResponseEntity.status(HttpStatus.CREATED).body(chamado);
     }
 
-    @PostMapping("/{userId}/aprovar-chamado")
-    public ResponseEntity<Void> aprovarChamado(@PathVariable Integer userId) {
-        enderecoService.aprovarChamado(userId);
+    @PostMapping("/{chamadoId}/aprovar-chamado")
+    public ResponseEntity<Void> aprovarChamado(@PathVariable Integer chamadoId) {
+        enderecoService.aprovarChamado(chamadoId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PostMapping("/{userId}/rejeitar-chamado")
-    public ResponseEntity<Void> rejeitarChamado(@PathVariable Integer userId) {
-        enderecoService.rejeitarChamado(userId);
+    @PostMapping("/{chamadoId}/rejeitar-chamado")
+    public ResponseEntity<Void> rejeitarChamado(@PathVariable Integer chamadoId) {
+        enderecoService.rejeitarChamado(chamadoId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
