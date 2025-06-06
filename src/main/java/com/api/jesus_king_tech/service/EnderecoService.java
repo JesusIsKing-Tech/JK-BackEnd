@@ -1,12 +1,20 @@
 package com.api.jesus_king_tech.service;
 
+import com.api.jesus_king_tech.domain.chamado_endereco.ChamadoEndereco;
+import com.api.jesus_king_tech.domain.chamado_endereco.dto.ChamadoEnderecoDto;
+import com.api.jesus_king_tech.domain.chamado_endereco.dto.ChamadoEnderecoMapper;
+import com.api.jesus_king_tech.domain.chamado_endereco.repository.ChamadoEnderecoRepository;
 import com.api.jesus_king_tech.domain.endereco.dto.*;
 import com.api.jesus_king_tech.domain.endereco.Endereco;
 import com.api.jesus_king_tech.domain.endereco.repository.EnderecoRepository;
 import com.api.jesus_king_tech.domain.endereco.repository.ViaCepClient;
+import com.api.jesus_king_tech.domain.usuario.Usuario;
 import com.api.jesus_king_tech.domain.usuario.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +30,9 @@ public class EnderecoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ChamadoEnderecoRepository chamadoEnderecoRepository;
 
 
 
@@ -103,6 +114,97 @@ public class EnderecoService {
             }
         }
         throw new ClassNotFoundException("Endereço não encontrado");
+    }
+
+    public ChamadoEnderecoDto abrirChamado(EnderecoDTO enderecoDTO, Integer userId) {
+
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() ->  new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado com o ID: " + userId));
+
+        boolean chamadoAberto = chamadoEnderecoRepository.findByUsuarioAndStatus(usuario, ChamadoEndereco.StatusChamado.ABERTO)
+                .isPresent();
+
+        if (chamadoAberto) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um chamado aberto para o usuário com ID: " + userId);
+        }
+
+        ChamadoEndereco chamado = ChamadoEndereco.builder()
+                .cep(enderecoDTO.getCep())
+                .logradouro(enderecoDTO.getLogradouro())
+                .numero(enderecoDTO.getNumero())
+                .complemento(enderecoDTO.getComplemento())
+                .bairro(enderecoDTO.getBairro())
+                .localidade(enderecoDTO.getLocalidade())
+                .uf(enderecoDTO.getUf())
+                .usuario(usuario)
+                .status(ChamadoEndereco.StatusChamado.ABERTO) // Status inicial
+                .build();
+
+        chamadoEnderecoRepository.save(chamado);
+
+        return ChamadoEnderecoMapper.toDto(chamado);
+    }
+
+
+    public void aprovarChamado(Integer userId) {
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado com o ID: " + userId));
+
+        ChamadoEndereco chamado = chamadoEnderecoRepository.findByUsuarioAndStatus(usuario, ChamadoEndereco.StatusChamado.ABERTO)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum chamado aberto encontrado para o usuário com ID: " + userId));
+
+       Endereco enderecoNovo = enderecoRepository.findByCepAndLogradouroAndBairroAndLocalidadeAndUfAndNumeroAndComplemento(
+                chamado.getCep(),
+                chamado.getLogradouro(),
+                chamado.getBairro(),
+                chamado.getLocalidade(),
+                chamado.getUf(),
+                chamado.getNumero(),
+                chamado.getComplemento()
+        ).orElse(null);
+
+       if (enderecoNovo == null) {
+           Endereco endereco = enderecoRepository.save(Endereco.builder()
+                   .cep(chamado.getCep())
+                   .logradouro(chamado.getLogradouro())
+                   .numero(chamado.getNumero())
+                   .complemento(chamado.getComplemento())
+                   .bairro(chamado.getBairro())
+                   .localidade(chamado.getLocalidade())
+                   .uf(chamado.getUf())
+                   .build());
+
+              usuario.setEndereco(endereco);
+        }else {
+           usuario.setEndereco(enderecoNovo);
+         }
+
+       chamado.setStatus(ChamadoEndereco.StatusChamado.APROVADO);
+       chamado.setUpdated_at(java.time.LocalDateTime.now());
+
+       chamadoEnderecoRepository.save(chamado);
+    }
+
+    public void rejeitarChamado(Integer userId) {
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado com o ID: " + userId));
+
+        ChamadoEndereco chamado = chamadoEnderecoRepository.findByUsuarioAndStatus(usuario, ChamadoEndereco.StatusChamado.ABERTO)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum chamado aberto encontrado para o usuário com ID: " + userId));
+
+        chamado.setStatus(ChamadoEndereco.StatusChamado.REJEITADO);
+        chamado.setUpdated_at(java.time.LocalDateTime.now());
+
+        chamadoEnderecoRepository.save(chamado);
+    }
+
+    public List<ChamadoEnderecoDto> getChamadosPendentes() {
+
+        return chamadoEnderecoRepository.findAllByStatus(ChamadoEndereco.StatusChamado.ABERTO)
+                .stream()
+                .map(ChamadoEnderecoMapper::toDto)
+                .toList();
+
     }
 }
 

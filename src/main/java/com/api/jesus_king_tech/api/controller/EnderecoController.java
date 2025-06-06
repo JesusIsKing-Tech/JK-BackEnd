@@ -1,5 +1,7 @@
 package com.api.jesus_king_tech.api.controller;
 
+import com.api.jesus_king_tech.domain.chamado_endereco.ChamadoEndereco;
+import com.api.jesus_king_tech.domain.chamado_endereco.dto.ChamadoEnderecoDto;
 import com.api.jesus_king_tech.domain.endereco.dto.EnderecoDTO;
 import com.api.jesus_king_tech.domain.endereco.dto.EnderecoResponse;
 import com.api.jesus_king_tech.domain.endereco.dto.EnderecoViaCepDTO;
@@ -85,6 +87,34 @@ public class EnderecoController implements EnderecoControllerOpenApi {
     public ResponseEntity<Integer> verificarEndereco(@RequestBody EnderecoDTO enderecoDTO) throws ClassNotFoundException {
         Integer enderecoId = enderecoService.verificarEndereco(enderecoDTO);
         return ResponseEntity.ok(enderecoId);
+    }
+
+    @PostMapping("/{userId}/abrir-chamado")
+    public ResponseEntity<ChamadoEnderecoDto> abrirChamado(@RequestBody EnderecoDTO enderecoDTO, @PathVariable Integer userId) {
+       ChamadoEnderecoDto chamado = enderecoService.abrirChamado(enderecoDTO, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(chamado);
+    }
+
+    @PostMapping("/{userId}/aprovar-chamado")
+    public ResponseEntity<Void> aprovarChamado(@PathVariable Integer userId) {
+        enderecoService.aprovarChamado(userId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/{userId}/rejeitar-chamado")
+    public ResponseEntity<Void> rejeitarChamado(@PathVariable Integer userId) {
+        enderecoService.rejeitarChamado(userId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/chamados")
+    public ResponseEntity<List<ChamadoEnderecoDto>> getChamadosPendentes() {
+        List<ChamadoEnderecoDto> chamadosPendentes = enderecoService.getChamadosPendentes();
+
+        if (chamadosPendentes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.ok(chamadosPendentes);
     }
 
 }
