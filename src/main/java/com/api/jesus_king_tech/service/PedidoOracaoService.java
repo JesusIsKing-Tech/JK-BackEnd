@@ -27,6 +27,9 @@ public class PedidoOracaoService {
                List<PedidoOracaoResponseDTO> pedidosResponse = new ArrayList<>();
 
                for (PedidoOracao pedido : pedidos) {
+                   if (pedido.isOrado()) {
+                       continue; // Ignora pedidos já orados
+                   }
                    PedidoOracaoResponseDTO pedidoResponse = PedidoOracaoMapper.toResponseDTO(pedido);
                    pedidosResponse.add(pedidoResponse);
                }
@@ -54,5 +57,13 @@ public class PedidoOracaoService {
 
     public void deletarPedidoOracao(Integer id) {
         pedidoOracaoRepository.deleteById(id);
+    }
+
+    public void orarPorPedidoOracao(Integer id) {
+        PedidoOracao pedidoOracao = pedidoOracaoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido de oração não encontrado"));
+
+        pedidoOracao.setOrado(true);
+        pedidoOracaoRepository.save(pedidoOracao);
     }
 }

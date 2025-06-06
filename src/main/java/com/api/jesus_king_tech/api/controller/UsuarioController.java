@@ -83,7 +83,7 @@ import java.util.stream.Collectors;
         Usuario usuario = usuarioService.buscarUsuarioPorId(id);
 
         if (usuario.getFotoPerfil() == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.noContent().build();
         }
 
         String mimeType = usuario.getFotoPerfilMimeType();
