@@ -43,6 +43,6 @@ public class Postagem {
     private LocalTime horaEvento;
 
     @ManyToOne
-    @JoinColumn(name = "postagem_id")
+    @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 }
