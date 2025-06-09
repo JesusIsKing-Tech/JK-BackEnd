@@ -24,6 +24,10 @@ jobs:
     - name: Compilar o projeto com Maven
       run: mvn clean package -DskipTests=false
 
+    - name: Listar arquivos gerados
+      run: ls -l target
+
+
     - name: Executar testes unitários
       run: mvn test
 
