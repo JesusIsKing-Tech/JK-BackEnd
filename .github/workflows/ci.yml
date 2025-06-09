@@ -36,8 +36,8 @@ jobs:
     - name: Construir imagem Docker
       run: |
         docker build \
-          --build-arg EMAIL_SENHA=${{ secrets.EMAIL_SENHA }} \
-          -t ${{ secrets.DOCKERHUB_USERNAME }}/projeto-spring:latest .
+          --build-arg EMAIL_SENHA="${{ secrets.EMAIL_SENHA }}" \
+          -t "${{ secrets.DOCKERHUB_USERNAME }}/projeto-spring:latest" .
 
     - name: Enviar imagem para o Docker Hub
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/projeto-spring:latest
