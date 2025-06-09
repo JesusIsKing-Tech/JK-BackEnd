@@ -59,6 +59,9 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Copiar artefatos para o contexto do Docker
+      run: cp -r target .
+
     - name: Construir imagem Docker
       run: |
         docker build \
