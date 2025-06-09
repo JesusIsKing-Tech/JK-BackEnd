@@ -202,6 +202,31 @@ public class EnderecoService {
                 .toList();
 
     }
+
+    public Endereco validarOuCriarEndereco(EnderecoDTO enderecoDTO) {
+        // Verifica se o endereço existe no banco de dados
+        return enderecoRepository.findByCepAndLogradouroAndBairroAndLocalidadeAndUfAndNumeroAndComplemento(
+                enderecoDTO.getCep(),
+                enderecoDTO.getLogradouro(),
+                enderecoDTO.getBairro(),
+                enderecoDTO.getLocalidade(),
+                enderecoDTO.getUf(),
+                enderecoDTO.getNumero(),
+                enderecoDTO.getComplemento()
+        ).orElseGet(() -> {
+            // Se o endereço não existir, cria um novo
+            Endereco novoEndereco = Endereco.builder()
+                    .cep(enderecoDTO.getCep())
+                    .logradouro(enderecoDTO.getLogradouro())
+                    .bairro(enderecoDTO.getBairro())
+                    .localidade(enderecoDTO.getLocalidade())
+                    .uf(enderecoDTO.getUf())
+                    .numero(enderecoDTO.getNumero())
+                    .complemento(enderecoDTO.getComplemento())
+                    .build();
+            return enderecoRepository.save(novoEndereco);
+        });
+    }
 }
 
 

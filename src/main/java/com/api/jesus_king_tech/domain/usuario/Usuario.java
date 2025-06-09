@@ -49,4 +49,12 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario")
     private List<CestaBasica> cestasBasicas;
 
+    @Column(name = "data_cadastro")
+    private LocalDate dataCadastro;
+
+    @PrePersist
+    public void prePersist() {
+        this.dataCadastro = LocalDate.now();
+    }
+
 }

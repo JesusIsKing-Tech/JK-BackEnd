@@ -49,4 +49,17 @@ public class PostagemService {
 
         return null;
     }
+
+    public Postagem buscarPorId(Integer id) {
+        return postagemRepository.findById(id)
+                .orElse(null);
+    }
+
+    public void deletar(Integer id) {
+        if (postagemRepository.existsById(id)) {
+            postagemRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Postagem não encontrada com o ID: " + id);
+        }
+    }
 }
