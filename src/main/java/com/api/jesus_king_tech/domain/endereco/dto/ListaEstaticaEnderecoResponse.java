@@ -109,6 +109,8 @@ public class ListaEstaticaEnderecoResponse {
 
     }
 
+    //teste para subir uma branch na CI
+
 
 }
 
