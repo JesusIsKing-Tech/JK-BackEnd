@@ -1,0 +1,11 @@
+# Ignorar diretórios e arquivos desnecessários
+target/
+.git/
+.github/
+.idea/
+*.iml
+*.log
+*.md
+docker-compose.yml
+.env
+*.sh
