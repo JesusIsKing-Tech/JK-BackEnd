@@ -313,4 +313,10 @@ import java.util.stream.Collectors;
         return ResponseEntity.ok(dtos);
     }
 
+    @GetMapping("/usuarios-por-mes")
+    public ResponseEntity<Map<String, Long>> obterUsuariosPorMes() {
+        Map<String, Long> usuariosPorMes = usuarioService.obterUsuariosPorMes();
+        return ResponseEntity.ok(usuariosPorMes);
+    }
+
 }

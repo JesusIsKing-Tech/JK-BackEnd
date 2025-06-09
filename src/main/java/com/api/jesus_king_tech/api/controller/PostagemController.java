@@ -2,8 +2,12 @@ package com.api.jesus_king_tech.api.controller;
 
 import com.api.jesus_king_tech.domain.endereco.Endereco;
 import com.api.jesus_king_tech.domain.endereco.dto.EnderecoDTO;
+import com.api.jesus_king_tech.domain.endereco.dto.EnderecoMapper;
 import com.api.jesus_king_tech.domain.endereco.repository.EnderecoRepository;
 import com.api.jesus_king_tech.domain.postagem.Postagem;
+import com.api.jesus_king_tech.domain.postagem.dto.PostagemDto;
+import com.api.jesus_king_tech.domain.postagem.dto.PostagemMapper;
+import com.api.jesus_king_tech.service.EnderecoService;
 import com.api.jesus_king_tech.service.PostagemService;
 import org.bouncycastle.asn1.x509.Time;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +30,21 @@ public class PostagemController {
 
     @Autowired
     private EnderecoRepository enderecoRepository;
+    @Autowired
+    private EnderecoService enderecoService;
 
     @GetMapping
-    public ResponseEntity<List<Postagem>> listarPostagens() {
+    public ResponseEntity<List<PostagemDto>> listarPostagens() {
         List<Postagem> listagem = postagemService.listar();
 
         if (listagem.isEmpty()){
             ResponseEntity.status(204).build();
         }
 
-        return ResponseEntity.ok(listagem);
+        // Retorna a lista de postagens
+        List<PostagemDto> listagemDto = PostagemMapper.toDtoList(listagem);
+
+        return ResponseEntity.ok(listagemDto);
     }
 
     @PostMapping(consumes = {"multipart/form-data"})
@@ -53,36 +62,12 @@ public class PostagemController {
         java.time.LocalTime horaConvertida = java.time.LocalTime.parse(horaEvento);
 
         // Verifica se o endereço existe no banco de dados
-        Endereco endereco = enderecoRepository.findByCepAndLogradouroAndBairroAndLocalidadeAndUfAndNumeroAndComplemento(
-                enderecoEvento.getCep(),
-                enderecoEvento.getLogradouro(),
-                enderecoEvento.getBairro(),
-                enderecoEvento.getLocalidade(),
-                enderecoEvento.getUf(),
-                enderecoEvento.getNumero(),
-                enderecoEvento.getComplemento()
-        ).orElse(null);
-
-        if (endereco == null) {
-            // Se o endereço não existir, cria um novo
-            endereco = Endereco.builder()
-                    .cep(enderecoEvento.getCep())
-                    .logradouro(enderecoEvento.getLogradouro())
-                    .bairro(enderecoEvento.getBairro())
-                    .localidade(enderecoEvento.getLocalidade())
-                    .uf(enderecoEvento.getUf())
-                    .numero(enderecoEvento.getNumero())
-                    .complemento(enderecoEvento.getComplemento())
-                    .build();
-            enderecoRepository.save(endereco);
-        }
-
-
+        Endereco endereco = enderecoService.validarOuCriarEndereco(enderecoEvento);
 
         // Construção da nova postagem
         Postagem novaPostagem = Postagem.builder()
                 .titulo(tituloPostagem)
-                .data(dataConvertida)
+                .data(dataConvertida.toLocalDate())
                 .horaEvento(horaConvertida) // Hora do evento
                 .descricao(descricao)
                 .valor(valor)// Descrição opcional
@@ -110,6 +95,54 @@ public class PostagemController {
         }
         return ResponseEntity.status(200).header("Content-Type", "image/jpeg")
                 .body(foto);
+    }
+
+    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
+    public ResponseEntity<Postagem> atualizarPostagem(@PathVariable Integer id,
+                                                      @RequestParam(value = "file", required = false) MultipartFile file,
+                                                      @RequestParam("titulo") String tituloPostagem,
+                                                      @RequestParam("data") String dataPostagem,
+                                                      @RequestParam("hora") String horaEvento,
+                                                      @RequestParam(value = "descricao", required = false) String descricao,
+                                                      @RequestParam(value = "valor", required = false) Double valor,
+                                                      @RequestPart("enderecoEvento") EnderecoDTO enderecoEvento) throws IOException, ParseException {
+
+        // Busca a postagem pelo ID
+        Postagem postagemExistente = postagemService.buscarPorId(id);
+        if (postagemExistente == null) {
+            return ResponseEntity.status(404).build(); // Retorna NOT FOUND se a postagem não existir
+        }
+
+        // Conversão manual da data
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        java.sql.Date dataConvertida = new java.sql.Date(dateFormat.parse(dataPostagem).getTime());
+        java.time.LocalTime horaConvertida = java.time.LocalTime.parse(horaEvento);
+
+        // Atualiza os campos fornecidos
+        postagemExistente.setTitulo(tituloPostagem);
+        postagemExistente.setData(dataConvertida.toLocalDate());
+        postagemExistente.setHoraEvento(horaConvertida);
+        postagemExistente.setDescricao(descricao);
+        postagemExistente.setValor(valor);
+
+        // Verifica e atualiza o endereço
+        Endereco endereco = enderecoService.validarOuCriarEndereco(enderecoEvento);
+        postagemExistente.setEndereco(endereco);
+
+        // Salva a postagem atualizada
+        Postagem postagemAtualizada = postagemService.salvar(postagemExistente, file);
+
+        return ResponseEntity.ok(postagemAtualizada);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarPostagem(@PathVariable Integer id) {
+        Postagem postagem = postagemService.buscarPorId(id);
+        if (postagem == null) {
+            return ResponseEntity.status(404).build(); // Retorna NOT FOUND se a postagem não existir
+        }
+        postagemService.deletar(id);
+        return ResponseEntity.status(204).build(); // Retorna NO CONTENT após a exclusão
     }
 
 }

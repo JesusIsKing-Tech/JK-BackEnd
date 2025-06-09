@@ -34,17 +34,18 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 //@RequiredArgsConstructor
 public class UsuarioService {
 
-//    Injetando dependencias da classe service
+    //    Injetando dependencias da classe service
     private final UsuarioRepository usuarioRepository;
     private final List<ValidacaoUsuarioStrategy> validacoes;
     private final GerenciadorTokenJwt gerenciadorTokenJwt;
@@ -99,8 +100,8 @@ public class UsuarioService {
         Endereco endereco = enderecoService.enderecoExiste(novoEndereco);
 
         if (endereco == null) {
-         novoUsuario.setEndereco(enderecoRepository.save(novoEndereco));
-        }else {
+            novoUsuario.setEndereco(enderecoRepository.save(novoEndereco));
+        } else {
             novoUsuario.setEndereco(endereco);
         }
 
@@ -111,14 +112,14 @@ public class UsuarioService {
     }
 
     public List<Usuario> listarUsuarios() {
-      return usuarioRepository.findAll();
+        return usuarioRepository.findAll();
     }
 
-    public void enviarCodigoRecuperarSenha(String emailUsuario){
+    public void enviarCodigoRecuperarSenha(String emailUsuario) {
 
         Optional<Usuario> usuarioEmail = usuarioRepository.findByEmail(emailUsuario);
 
-        if (usuarioEmail.isEmpty()){
+        if (usuarioEmail.isEmpty()) {
             throw new ExceptionHttp("Email não cadastrado", HttpStatus.NOT_FOUND);
         }
 
@@ -139,17 +140,17 @@ public class UsuarioService {
     public void validarCodigoRecuperacaoSenha(UsuarioValidarCodigoDto validarSenhaDto) {
         Optional<Usuario> usuarioEmail = usuarioRepository.findByEmail(validarSenhaDto.getEmail());
 
-        if (usuarioEmail.isEmpty()){
+        if (usuarioEmail.isEmpty()) {
             throw new ExceptionHttp("Email não cadastrado", HttpStatus.NOT_FOUND);
         }
 
         Usuario usuario = usuarioEmail.get();
 
-        if (usuario.getValidade_codigo_senha().isBefore(LocalDateTime.now())){
+        if (usuario.getValidade_codigo_senha().isBefore(LocalDateTime.now())) {
             throw new ExceptionHttp("A validade do codigo expirou", HttpStatus.BAD_REQUEST);
         }
 
-        if (!validarSenhaDto.getCodigo_recuperar_senha().equals(usuario.getCodigo_recuperar_senha())){
+        if (!validarSenhaDto.getCodigo_recuperar_senha().equals(usuario.getCodigo_recuperar_senha())) {
             throw new ExceptionHttp("Codigo de recuperação está invalido !", HttpStatus.BAD_REQUEST);
         }
     }
@@ -157,21 +158,21 @@ public class UsuarioService {
     public void mudarSenha(UsuarioMudarSenhaDto mudarSenhaDto) {
         Optional<Usuario> usuarioEmail = usuarioRepository.findByEmail(mudarSenhaDto.getEmail());
 
-        if (usuarioEmail.isEmpty()){
+        if (usuarioEmail.isEmpty()) {
             throw new ExceptionHttp("Email não cadastrado", HttpStatus.NOT_FOUND);
         }
 
         Usuario usuario = usuarioEmail.get();
 
-        if (usuario.getValidade_codigo_senha() == null){
+        if (usuario.getValidade_codigo_senha() == null) {
             throw new ExceptionHttp("Nenhum codigo de validação encontrado, solicite um novo", HttpStatus.NOT_FOUND);
         }
 
-        if (usuario.getValidade_codigo_senha().isBefore(LocalDateTime.now())){
+        if (usuario.getValidade_codigo_senha().isBefore(LocalDateTime.now())) {
             throw new ExceptionHttp("A válidade do código expirou, solicite um novo", HttpStatus.BAD_REQUEST);
         }
 
-        if (!PasswordUtil.validarSenha(mudarSenhaDto.getSenha())){
+        if (!PasswordUtil.validarSenha(mudarSenhaDto.getSenha())) {
             throw new ExceptionHttp(PasswordUtil.respostaErroSenha(), HttpStatus.BAD_REQUEST);
         }
 
@@ -184,9 +185,9 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
-    public void deletarUsuarioPorId(Integer id){
+    public void deletarUsuarioPorId(Integer id) {
 
-        if (!usuarioRepository.existsById(id)){
+        if (!usuarioRepository.existsById(id)) {
             throw new ExceptionHttp("Não foi encontrado nenhum usuario com esse id", HttpStatus.NOT_FOUND);
         }
 
@@ -194,31 +195,31 @@ public class UsuarioService {
 
     }
 
-    public Usuario atualizarUsuarioPorId(Integer id, Usuario usuarioAtualizar){
+    public Usuario atualizarUsuarioPorId(Integer id, Usuario usuarioAtualizar) {
 
-        if (!usuarioRepository.existsById(id)){
+        if (!usuarioRepository.existsById(id)) {
             throw new ExceptionHttp("Nenhum usuario com o Id: " + id + " Encontrado", HttpStatus.NOT_FOUND);
         }
 
-            usuarioAtualizar.setId(id);
+        usuarioAtualizar.setId(id);
 //            VALIDA AS INFORMAÇÕES DO USUÁRIO
-            for (int i = 0; i < validacoes.size(); i++) {
-                if (!validacoes.get(i).validar(usuarioAtualizar)) {
-                    throw new ExceptionHttp(validacoes.get(i).respostaErro(), HttpStatus.BAD_REQUEST);
-                }
+        for (int i = 0; i < validacoes.size(); i++) {
+            if (!validacoes.get(i).validar(usuarioAtualizar)) {
+                throw new ExceptionHttp(validacoes.get(i).respostaErro(), HttpStatus.BAD_REQUEST);
             }
-            String hashSenha = PasswordUtil.encoder(usuarioAtualizar.getSenha());
-            usuarioAtualizar.setSenha(hashSenha);
+        }
+        String hashSenha = PasswordUtil.encoder(usuarioAtualizar.getSenha());
+        usuarioAtualizar.setSenha(hashSenha);
 
-            return usuarioRepository.save(usuarioAtualizar);
+        return usuarioRepository.save(usuarioAtualizar);
 
     }
 
-    public String atualizarSimplesUsuarioPorId(Integer id, UsuarioAtualizarSimplesDto usuarioAtualizar){
+    public String atualizarSimplesUsuarioPorId(Integer id, UsuarioAtualizarSimplesDto usuarioAtualizar) {
 
         Optional<Usuario> usuario = usuarioRepository.findById(id);
 
-        if (usuario.isEmpty()){
+        if (usuario.isEmpty()) {
             throw new ExceptionHttp("Nenhum usuario com o Id: " + id + " Encontrado", HttpStatus.NOT_FOUND);
         }
 
@@ -258,7 +259,7 @@ public class UsuarioService {
 
     }
 
-    public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto){
+    public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
 
         try {
 
@@ -278,7 +279,7 @@ public class UsuarioService {
             final String token = gerenciadorTokenJwt.generateToken(authentication);
 
             return UsuarioMapper.of(usuarioAutenticado, token);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email ou senha inválidos");
         }
 
@@ -331,8 +332,6 @@ public class UsuarioService {
 
         return Optional.empty();
     }
-
-
 
 
     public String exportarUsuariosParaCsv() throws IOException {
@@ -412,7 +411,6 @@ public class UsuarioService {
     }
 
 
-
     public List<Usuario> usuariosPorEndereco(int idEndereco) {
         Endereco endereco = enderecoRepository.findById(idEndereco)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereço não encontrado"));
@@ -448,7 +446,31 @@ public class UsuarioService {
         return usuario.getId();
     }
 
+    public Map<String, Long> obterUsuariosPorMes() {
+        LocalDate hoje = LocalDate.now();
+        LocalDate quatroMesesAtras = hoje.minusMonths(4);
 
+        // Consulta os usuários cadastrados nos últimos 4 meses
+        List<Usuario> usuarios = usuarioRepository.findByDataCadastroBetween(quatroMesesAtras, hoje);
 
+        // Inicializa o mapa com os últimos 4 meses e valores 0
+        Map<String, Long> usuariosPorMes = new LinkedHashMap<>();
+        for (int i = 0; i < 4; i++) {
+            LocalDate mes = hoje.minusMonths(i);
+            String nomeMes = mes.getMonth().getDisplayName(TextStyle.FULL, new Locale("pt", "BR"));
+            usuariosPorMes.put(nomeMes, 0L);
+        }
 
+        // Agrupa os usuários por mês e soma as quantidades
+        Map<String, Long> agrupados = usuarios.stream()
+                .collect(Collectors.groupingBy(
+                        usuario -> usuario.getDataCadastro().getMonth().getDisplayName(TextStyle.FULL, new Locale("pt", "BR")),
+                        Collectors.counting()
+                ));
+
+        // Atualiza os valores no mapa inicial
+        agrupados.forEach(usuariosPorMes::put);
+
+        return usuariosPorMes;
     }
+}

@@ -4,6 +4,7 @@ import com.api.jesus_king_tech.domain.endereco.Endereco;
 import com.api.jesus_king_tech.domain.usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +20,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     boolean existsByEndereco(Endereco endereco);
 
     List<Usuario> findAllByEndereco(Endereco endereco);
+
+    List<Usuario> findByDataCadastroBetween(LocalDate quatroMesesAtras, LocalDate hoje);
 }
