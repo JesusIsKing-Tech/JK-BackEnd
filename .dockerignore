@@ -1,5 +1,7 @@
 # Ignorar diretórios e arquivos desnecessários
-target/
+target/*
+!target/jesus-king-tech-0.0.1-SNAPSHOT.jar
+
 .git/
 .github/
 .idea/
