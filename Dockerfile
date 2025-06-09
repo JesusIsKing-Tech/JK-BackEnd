@@ -13,5 +13,5 @@ ENV DB_PASSWORD=Pibvm2025!
 ENV EMAIL_EMAIL=jesuskingtech@gmail.com
 ENV EMAIL_SENHA=${EMAIL_SENHA}
 
-COPY target/*.jar /app/app.jar
+COPY target/jesus-king-tech-0.0.1-SNAPSHOT.jar /app/app.jar
 CMD ["java", "-jar", "/app/app.jar"]
