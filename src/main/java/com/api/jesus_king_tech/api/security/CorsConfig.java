@@ -20,6 +20,5 @@ public class CorsConfig {
                         .allowCredentials(false); // Desabilita envio de cookies
             }
         };
-        };
     }
 }
