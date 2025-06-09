@@ -30,14 +30,14 @@ jobs:
     - name: Login no Docker Hub
       uses: docker/login-action@v3
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        username: ${{ secrets.DOCKERHUB_PABLO_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Construir imagem Docker
       run: |
         docker build \
           --build-arg EMAIL_SENHA=${{ secrets.EMAIL_SENHA }} \
-          -t ${{ secrets.DOCKERHUB_USERNAME }}/projeto-spring:latest .
+          -t ${{ secrets.DOCKERHUB_PABLO_USERNAME }}/projeto-spring:latest .
 
     - name: Enviar imagem para o Docker Hub
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/projeto-spring:latest
+      run: docker push ${{ secrets.DOCKERHUB_PABLO_USERNAME }}/projeto-spring:latest
