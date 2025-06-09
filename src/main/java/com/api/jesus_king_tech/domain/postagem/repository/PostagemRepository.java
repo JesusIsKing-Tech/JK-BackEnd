@@ -10,4 +10,6 @@ import java.util.List;
 public interface PostagemRepository extends JpaRepository<Postagem, Integer> {
 
     List<Postagem> findByDataBetween(LocalDate today, LocalDate nextWeek);
+
+    List<Postagem> findAllByEventosUsuario_UsuarioIdAndEventosUsuario_ConfirmouPresencaTrue(Integer usuarioId);
 }

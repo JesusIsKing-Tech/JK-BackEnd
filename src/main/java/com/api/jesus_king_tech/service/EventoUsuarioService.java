@@ -9,6 +9,8 @@ import com.api.jesus_king_tech.domain.usuario.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EventoUsuarioService {
 
@@ -82,4 +84,7 @@ public class EventoUsuarioService {
         return eventoUsuarioRepository.countByPostagemIdAndConfirmouPresencaTrue(postagemId);
     }
 
+    public List<Postagem> listarEventosConfirmados(Integer usuarioId) {
+        return postagemRepository.findAllByEventosUsuario_UsuarioIdAndEventosUsuario_ConfirmouPresencaTrue(usuarioId);
+    }
 }
