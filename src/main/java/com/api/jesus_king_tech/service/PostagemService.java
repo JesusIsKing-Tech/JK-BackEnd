@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostagemService {
@@ -37,5 +38,15 @@ public class PostagemService {
         LocalDate nextWeek = today.plusDays(7);
 
         return postagemRepository.findByDataBetween(today, nextWeek);
+    }
+
+    public byte[] obterFotoEvento(Integer id) {
+        Optional<Postagem> postagem = postagemRepository.findById(id);
+
+        if (postagem.isPresent() && postagem.get().getImagem() != null) {
+            return postagem.get().getImagem();
+        }
+
+        return null;
     }
 }

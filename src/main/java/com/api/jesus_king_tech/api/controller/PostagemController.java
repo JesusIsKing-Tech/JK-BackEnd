@@ -101,4 +101,15 @@ public class PostagemController {
         return ResponseEntity.ok(postagemSemana);
     }
 
+    @GetMapping("/foto-evento/{id}")
+    public ResponseEntity<byte[]> obterFotoEvento(@PathVariable Integer id) {
+
+        byte[] foto = postagemService.obterFotoEvento(id);
+        if (foto == null) {
+            return ResponseEntity.status(204).build();
+        }
+        return ResponseEntity.status(200).header("Content-Type", "image/jpeg")
+                .body(foto);
+    }
+
 }
