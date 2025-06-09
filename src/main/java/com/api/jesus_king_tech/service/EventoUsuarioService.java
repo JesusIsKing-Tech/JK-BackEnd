@@ -90,4 +90,11 @@ public class EventoUsuarioService {
                 .map(EventoUsuario::getPostagem)
                 .toList();
     }
+
+    public List<Postagem> listarEventosCurtidos(Integer usuarioId) {
+        return eventoUsuarioRepository.findAll().stream()
+                .filter(eventoUsuario -> eventoUsuario.getUsuario().getId().equals(usuarioId) && eventoUsuario.isCurtiu())
+                .map(EventoUsuario::getPostagem)
+                .toList();
+    }
 }

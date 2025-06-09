@@ -48,4 +48,9 @@ public class EventoUsuarioController {
     public List<Postagem> contarEventosConfirmados(@PathVariable Integer usuarioId) {
         return eventoUsuarioService.listarEventosConfirmados(usuarioId);
     }
+
+    @GetMapping("/eventos-curtidos/{usuarioId}")
+    public List<Postagem> listarEventosCurtidos(@PathVariable Integer usuarioId) {
+        return eventoUsuarioService.listarEventosCurtidos(usuarioId);
+    }
 }
