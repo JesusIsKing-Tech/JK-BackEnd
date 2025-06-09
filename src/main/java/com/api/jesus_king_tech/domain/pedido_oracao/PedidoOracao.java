@@ -24,5 +24,8 @@ public class PedidoOracao {
     @ManyToOne
     @NotNull(message = "O campo idUsuario é obrigatório.")
     private Usuario usuario;
+
+    @Column(nullable = false)
+    private boolean orado = false; // Indica se o pedido de oração já foi orado ou não
 }
 

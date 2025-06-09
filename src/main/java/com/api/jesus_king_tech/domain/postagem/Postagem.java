@@ -1,11 +1,12 @@
 package com.api.jesus_king_tech.domain.postagem;
 
+import com.api.jesus_king_tech.domain.endereco.Endereco;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
+import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
@@ -37,4 +38,11 @@ public class Postagem {
 
     @Column(name = "imagem_mime_type")
     private String imagemMimeType;
+
+    @Column(name = "hora_evento")
+    private LocalTime horaEvento;
+
+    @ManyToOne
+    @JoinColumn(name = "endereco_id")
+    private Endereco endereco;
 }

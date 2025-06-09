@@ -1,8 +1,11 @@
 package com.api.jesus_king_tech.api.controller;
 
+import com.api.jesus_king_tech.domain.postagem.Postagem;
 import com.api.jesus_king_tech.service.EventoUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/evento-usuario")
@@ -39,5 +42,15 @@ public class EventoUsuarioController {
     @GetMapping("/contar-presencas/{postagemId}")
     public long contarConfirmacoesPresenca(@PathVariable Integer postagemId) {
         return eventoUsuarioService.contarConfirmacoesPresenca(postagemId);
+    }
+
+    @GetMapping("/eventos-confirmado/{usuarioId}")
+    public List<Postagem> contarEventosConfirmados(@PathVariable Integer usuarioId) {
+        return eventoUsuarioService.listarEventosConfirmados(usuarioId);
+    }
+
+    @GetMapping("/eventos-curtidos/{usuarioId}")
+    public List<Postagem> listarEventosCurtidos(@PathVariable Integer usuarioId) {
+        return eventoUsuarioService.listarEventosCurtidos(usuarioId);
     }
 }

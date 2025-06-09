@@ -10,4 +10,5 @@ import java.util.List;
 public interface PostagemRepository extends JpaRepository<Postagem, Integer> {
 
     List<Postagem> findByDataBetween(LocalDate today, LocalDate nextWeek);
+
 }

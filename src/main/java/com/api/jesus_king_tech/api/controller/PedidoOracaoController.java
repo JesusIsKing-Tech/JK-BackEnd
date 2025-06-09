@@ -35,6 +35,13 @@ public class PedidoOracaoController {
         return ResponseEntity.status(201).body(pedidoOracaoSalvo);
     }
 
+    @PostMapping("/{id}/orar")
+    public ResponseEntity<Void> orarPorPedidoOracao(@PathVariable Integer id) {
+        pedidoOracaoService.orarPorPedidoOracao(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarPedidoOracao(@PathVariable Integer id) {
         pedidoOracaoService.deletarPedidoOracao(id);
