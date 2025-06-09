@@ -85,6 +85,9 @@ public class EventoUsuarioService {
     }
 
     public List<Postagem> listarEventosConfirmados(Integer usuarioId) {
-        return postagemRepository.findAllByEventosUsuario_UsuarioIdAndEventosUsuario_ConfirmouPresencaTrue(usuarioId);
+        return eventoUsuarioRepository.findAll().stream()
+                .filter(eventoUsuario -> eventoUsuario.getUsuario().getId().equals(usuarioId) && eventoUsuario.isConfirmouPresenca())
+                .map(EventoUsuario::getPostagem)
+                .toList();
     }
 }
