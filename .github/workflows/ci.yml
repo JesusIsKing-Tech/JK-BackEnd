@@ -24,6 +24,13 @@ jobs:
 
     - name: Compilar o projeto
       run: mvn clean package -DskipTests=true
+    
+    - name: Gerar artefato (.jar)
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-jar
+        path: target/jesus-king-tech-0.0.1-SNAPSHOT.jar
+
 
   test:
     name: Testes Unitários
@@ -52,6 +59,12 @@ jobs:
     steps:
     - name: Checkout do código
       uses: actions/checkout@v4
+
+    - name: Baixar artefato (.jar)
+      uses: actions/download-artifact@v4
+      with:
+          name: app-jar
+          path: target
 
     - name: Setup Docker Buildx (opcional, mas recomendado)
       uses: docker/setup-buildx-action@v3
